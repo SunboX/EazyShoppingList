@@ -4,7 +4,7 @@
  * @license http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
 
-var scr = new Mobile.GUI.Screen('main');
+var scr = new Mobile.GUI.Screen('viewList');
 
 var db = Mobile.Application.getDB();
 

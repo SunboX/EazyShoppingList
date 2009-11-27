@@ -21,7 +21,7 @@ var Database = new Class({
     
     initialize: function(name){
 		if (Browser.Database.name == 'unknown') {
-			alert('No valid Database found!');
+			alert('No valid database found!');
 			return;
 		}
 		
@@ -35,13 +35,13 @@ var Database = new Class({
 		}
 	},
 	
-	execute: function(sql, values, callback){
+	execute: function(sql, values, callback, errorCallback){
 		if(this.whatwg)
 			this.db.transaction(function (transaction) {
 				transaction.executeSql(sql, (values || []), function(transaction, rs){
 					if(callback)
 						callback(new Database.ResultSet(rs));
-				}, function(){});
+				}, errorCallback);
 			});
 		else
 			if(callback)
