@@ -20,7 +20,13 @@ var db = Mobile.Application.getDB();
 		
 db.execute('SELECT id, name, items FROM shopping_lists', null, function(rs){
 	while(row = rs.next()){
-		shopListsList.addItem(row.get('name'));
+		var item = shopListsList.addItem(row.get('name'), {
+			id: 'list-' + row.get('id')
+		});
+		item.addEvent('click', function(e){
+			Mobile.Application.setCurrentList(this.get('id').replace(/list-/, ''));
+			Mobile.Application.loadScreen('viewList');
+		});
 	}
 });
 

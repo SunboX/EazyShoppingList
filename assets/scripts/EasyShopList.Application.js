@@ -30,5 +30,13 @@ Mobile.Application.extend({
 	
 	getDB: function(){
 		return this.db;
+	},
+	
+	setCurrentList: function(id){
+		this.currentListId = id.toInt();
+	},
+	
+	getCurrentList: function(){
+		return this.currentListId;
 	}
 });

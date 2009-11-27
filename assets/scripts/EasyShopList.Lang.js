@@ -13,6 +13,7 @@ MooTools.lang.set('en-US', 'ESL', {
 	'back': 				'back',
 	'done': 				'done',
 	'listName':				'Name',
-	'newListContentMsg': 	'Add your list items here. Sepparate items through line breaks.'
+	'newListContentMsg': 	'Add your list items here. Sepparate items through line breaks.',
+	'edit':					'edit'
 
 });

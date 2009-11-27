@@ -107,7 +107,8 @@ Mobile.GUI.List = new Class({
 		options = options || {};
 		
 		var item = new Element('li', {
-			text: text
+			text: text,
+			id: options.id || 'm-g-l-' + $time()
 		}).inject(this.element);
 		
 		return item;

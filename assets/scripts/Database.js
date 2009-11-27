@@ -28,7 +28,7 @@ var Database = new Class({
 		this.whatwg = Browser.Database.name == 'whatwg';
 		
 		if(this.whatwg)
-			this.db = openDatabase(name, '1.0', '', 200 * 1024);
+			this.db = openDatabase(name, '1.0', '', 65536);
 		else{
 			this.db = google.gears.factory.create('beta.database');
 			this.db.open(name);
@@ -66,10 +66,10 @@ Database.ResultSet = new Class({
 	next: function(){
 		var row = null;
 		
-		if(this.whatwg && this.rs.rows.length > 0){
+		if(this.whatwg && this.index < this.rs.rows.length){
 			row = new Database.ResultSet.Row(this.rs.rows.item(this.index++));
 		}
-		else if(this.rs.isValidRow()){
+		else if(!this.whatwg && this.rs.isValidRow()){
 			row = new Database.ResultSet.Row(this.rs);
 			this.rs.next();
 			this.index++;
