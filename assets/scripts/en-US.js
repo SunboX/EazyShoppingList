@@ -6,7 +6,11 @@
 
 MooTools.lang.set('en-US', 'ESL', {
  
-    yourLists: 'Your Lists',
-	newList: 'new'
+ 	'signUp': 		'Sign Up',
+    'yourLists': 	'Your Lists',
+	'newList': 		'New List',
+	'new': 			'new',
+	'back': 		'back',
+	'done': 		'done'
 
 });
