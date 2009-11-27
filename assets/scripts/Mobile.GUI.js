@@ -100,7 +100,9 @@ Mobile.GUI.List = new Class({
 	Implements: [Mobile.GUI.Control],
 	
 	initialize: function(options){
-		this.element = new Element('ul');
+		this.element = new Element('ul', {
+			'class': 'field'
+		});
 	},
 	
 	addItem: function(text, options){
@@ -110,6 +112,9 @@ Mobile.GUI.List = new Class({
 			text: text,
 			id: options.id || 'm-g-l-' + $time()
 		}).inject(this.element);
+		
+		if($chk(options.type))
+			item.addClass(options.type);
 		
 		return item;
 	}

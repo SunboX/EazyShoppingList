@@ -21,6 +21,7 @@ var db = Mobile.Application.getDB();
 db.execute('SELECT id, name, items FROM shopping_lists', null, function(rs){
 	while(row = rs.next()){
 		var item = shopListsList.addItem(row.get('name'), {
+			type: 'arrow',
 			id: 'list-' + row.get('id')
 		});
 		item.addEvent('click', function(e){
