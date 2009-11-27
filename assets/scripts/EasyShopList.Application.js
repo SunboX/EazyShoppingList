@@ -15,7 +15,7 @@ Mobile.Application.extend({
 		this.db = new Database('EasyShopList');
 		
 		/* create db table if not exist */
-		this.db.execute('CREATE TABLE shopping_lists(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name  TEXT NOT NULL, items  TEXT NOT NULL)');
+		this.db.execute('CREATE TABLE shopping_lists (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, items TEXT NOT NULL)');
 		
 		if(this.config.is_registered){
 			this.fireEvent('startUp');
