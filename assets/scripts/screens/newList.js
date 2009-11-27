@@ -44,9 +44,10 @@ doneBtn.addEvent('click', function(e){
 	if (done) {
 		var db = Mobile.Application.getDB();
 		
-		db.execute('INSERT INTO shopping_lists (name, items) VALUES (?, ?)', [nameField.get('value'), itemsField.get('value')]);
-		
-		Mobile.Application.loadScreen('main');
+		db.execute('INSERT INTO shopping_lists (name, items) VALUES (?, ?)', [nameField.get('value'), itemsField.get('value')], function(){
+			
+			Mobile.Application.loadScreen('main');
+		});
 	}
 });
 
