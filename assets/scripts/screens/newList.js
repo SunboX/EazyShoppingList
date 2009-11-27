@@ -16,14 +16,40 @@ var backBtn = header.addButton(MooTools.lang.get('ESL', 'back'), {type: 'back'})
 
 scr.addControl(header);
 
-doneBtn.addEvent('click', function(e){
-	e.stop();
-	alert('done!');
-});
-
 backBtn.addEvent('click', function(e){
 	e.stop();
 	Mobile.Application.loadLastScreen();
 });
+
+var form = new Mobile.GUI.Form();
+
+var nameField = form.addTextfield('name', MooTools.lang.get('ESL', 'listName'));
+var itemsField = form.addTextarea('items', MooTools.lang.get('ESL', 'newListContentMsg'));
+
+doneBtn.addEvent('click', function(e){
+	e.stop();
+	
+	var done = true;
+	
+	if (nameField.isEmpty()) {
+		nameField.setError();
+		done = false;
+	}
+	
+	if (itemsField.isEmpty()) {
+		itemsField.setError();
+		done = false;
+	}
+	
+	if (done) {
+		var db = Mobile.Application.getDB();
+		
+		db.execute('INSERT INTO shopping_lists (name, items) VALUES (?, ?)', [nameField.get('value'), itemsField.get('value')]);
+		
+		Mobile.Application.loadScreen('main');
+	}
+});
+
+scr.addControl(form);
 
 Mobile.Application.showScreen(scr);

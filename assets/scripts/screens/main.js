@@ -16,10 +16,13 @@ scr.addControl(header);
 
 var shopListsList = new Mobile.GUI.List();
 
-shopListsList.addItem('List One');
-shopListsList.addItem('List Two');
-shopListsList.addItem('List Three');
-shopListsList.addItem('List Four');
+var db = Mobile.Application.getDB();
+		
+db.execute('SELECT id, name, items FROM shopping_lists', null, function(rs){
+	while(row = rs.next()){
+		shopListsList.addItem(row.get('name'));
+	}
+});
 
 scr.addControl(shopListsList);
 
