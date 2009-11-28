@@ -14,6 +14,7 @@ MooTools.lang.set('en-US', 'ESL', {
 	'done': 				'done',
 	'listName':				'Name',
 	'newListContentMsg': 	'Add your list items here. Sepparate items through line breaks.',
-	'edit':					'edit'
+	'edit':					'edit',
+	'Delete this List':		'Delete this List'
 
 });

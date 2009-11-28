@@ -229,3 +229,47 @@ Mobile.GUI.Form = new Class({
 		return field;
 	}
 });
+
+Mobile.GUI.Button = new Class({
+ 	
+	Implements: [Mobile.GUI.Control],
+	
+	initialize: function(text, options){
+		options = options || {};
+		
+		this.element = new Element('p');
+		
+		this.btn = new Element('a', {
+			text: text,
+			'class': 'button'
+		}).inject(this.element);
+		
+		options.type = options.type || 'white';
+		
+		if($chk(options.type))
+			this.btn.addClass(options.type);
+			
+		if($chk(options.href))
+			this.btn.set('href', options.href);
+	},
+	
+	addEvent: function(type, fn, internal){
+		return this.btn.addEvent(type, fn, internal);
+	},
+
+	addEvents: function(events){
+		return this.btn.addEvents(events);
+	},
+
+	fireEvent: function(type, args, delay){
+		return this.btn.fireEvent(type, args, delay);
+	},
+
+	removeEvent: function(type, fn){
+		return this.btn.removeEvent(type, fn);
+	},
+
+	removeEvents: function(events){
+		return this.btn.removeEvents(events);
+	}
+});

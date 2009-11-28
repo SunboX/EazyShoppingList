@@ -40,5 +40,20 @@ db.execute('SELECT id, name, items FROM shopping_lists WHERE id = ?', [Mobile.Ap
 		Mobile.Application.loadLastScreen();
 	});
 	
+	editBtn.addEvent('click', function(e){
+		e.stop();
+		alert('Not implemented yet!');
+	});
+	
+	var deleteBtn = new Mobile.GUI.Button(MooTools.lang.get('ESL', 'Delete this List'));
+	
+	deleteBtn.addEvent('click', function(e){
+		db.execute('DELETE FROM shopping_lists WHERE id = ?', [Mobile.Application.getCurrentList()], function(rs){
+			Mobile.Application.loadScreen('main');
+		});
+	});
+	
+	scr.addControl(deleteBtn);
+	
 	Mobile.Application.showScreen(scr);
 });
