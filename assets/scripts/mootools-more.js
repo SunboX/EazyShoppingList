@@ -30,86 +30,6 @@ MooTools.More = {
 /*
 ---
 
-script: Log.js
-
-description: Provides basic logging functionality for plugins to implement.
-
-license: MIT-style license
-
-authors:
-- Guillermo Rauch
-- Thomas Aylott
-- Scott Kyle
-
-requires:
-- core:1.2.4/Class
-- /MooTools.More
-
-provides: [Log]
-
-...
-*/
-
-(function(){
-
-var global = this;
-
-var log = function(){
-	if (global.console && console.log){
-		try {
-			console.log.apply(console, arguments);
-		} catch(e) {
-			console.log(Array.slice(arguments));
-		}
-	} else {
-		Log.logged.push(arguments);
-	}
-	return this;
-};
-
-var disabled = function(){
-	this.logged.push(arguments);
-	return this;
-};
-
-this.Log = new Class({
-	
-	logged: [],
-	
-	log: disabled,
-	
-	resetLog: function(){
-		this.logged.empty();
-		return this;
-	},
-
-	enableLog: function(){
-		this.log = log;
-		this.logged.each(function(args){
-			this.log.apply(this, args);
-		}, this);
-		return this.resetLog();
-	},
-
-	disableLog: function(){
-		this.log = disabled;
-		return this;
-	}
-	
-});
-
-Log.extend(new Log).enableLog();
-
-// legacy
-Log.logger = function(){
-	return this.log.apply(this, arguments);
-};
-
-})();
-
-/*
----
-
 script: MooTools.Lang.js
 
 description: Provides methods for localization.
@@ -209,6 +129,428 @@ provides: [MooTools.Lang]
 	});
 
 })();
+
+/*
+---
+
+script: Log.js
+
+description: Provides basic logging functionality for plugins to implement.
+
+license: MIT-style license
+
+authors:
+- Guillermo Rauch
+- Thomas Aylott
+- Scott Kyle
+
+requires:
+- core:1.2.4/Class
+- /MooTools.More
+
+provides: [Log]
+
+...
+*/
+
+(function(){
+
+var global = this;
+
+var log = function(){
+	if (global.console && console.log){
+		try {
+			console.log.apply(console, arguments);
+		} catch(e) {
+			console.log(Array.slice(arguments));
+		}
+	} else {
+		Log.logged.push(arguments);
+	}
+	return this;
+};
+
+var disabled = function(){
+	this.logged.push(arguments);
+	return this;
+};
+
+this.Log = new Class({
+	
+	logged: [],
+	
+	log: disabled,
+	
+	resetLog: function(){
+		this.logged.empty();
+		return this;
+	},
+
+	enableLog: function(){
+		this.log = log;
+		this.logged.each(function(args){
+			this.log.apply(this, args);
+		}, this);
+		return this.resetLog();
+	},
+
+	disableLog: function(){
+		this.log = disabled;
+		return this;
+	}
+	
+});
+
+Log.extend(new Log).enableLog();
+
+// legacy
+Log.logger = function(){
+	return this.log.apply(this, arguments);
+};
+
+})();
+
+/*
+---
+
+script: Class.Refactor.js
+
+description: Extends a class onto itself with new property, preserving any items attached to the class's namespace.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- core:1.2.4/Class
+- /MooTools.More
+
+provides: [Class.refactor]
+
+...
+*/
+
+Class.refactor = function(original, refactors){
+
+	$each(refactors, function(item, name){
+		var origin = original.prototype[name];
+		if (origin && (origin = origin._origin) && typeof item == 'function') original.implement(name, function(){
+			var old = this.previous;
+			this.previous = origin;
+			var value = item.apply(this, arguments);
+			this.previous = old;
+			return value;
+		}); else original.implement(name, item);
+	});
+
+	return original;
+
+};
+
+/*
+---
+
+script: Class.Binds.js
+
+description: Automagically binds specified methods in a class to the instance of the class.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- core:1.2.4/Class
+- /MooTools.More
+
+provides: [Class.Binds]
+
+...
+*/
+
+Class.Mutators.Binds = function(binds){
+    return binds;
+};
+
+Class.Mutators.initialize = function(initialize){
+	return function(){
+		$splat(this.Binds).each(function(name){
+			var original = this[name];
+			if (original) this[name] = original.bind(this);
+		}, this);
+		return initialize.apply(this, arguments);
+	};
+};
+
+
+/*
+---
+
+script: String.QueryString.js
+
+description: Methods for dealing with URI query strings.
+
+license: MIT-style license
+
+authors:
+- Sebastian MarkbÃ¥ge, Aaron Newton, Lennart Pilon, Valerio Proietti
+
+requires:
+- core:1.2.4/Array
+- core:1.2.4/String
+- /MooTools.More
+
+provides: [String.QueryString]
+
+...
+*/
+
+String.implement({
+
+	parseQueryString: function(){
+		var vars = this.split(/[&;]/), res = {};
+		if (vars.length) vars.each(function(val){
+			var index = val.indexOf('='),
+				keys = index < 0 ? [''] : val.substr(0, index).match(/[^\]\[]+/g),
+				value = decodeURIComponent(val.substr(index + 1)),
+				obj = res;
+			keys.each(function(key, i){
+				var current = obj[key];
+				if(i < keys.length - 1)
+					obj = obj[key] = current || {};
+				else if($type(current) == 'array')
+					current.push(value);
+				else
+					obj[key] = $defined(current) ? [current, value] : value;
+			});
+		});
+		return res;
+	},
+
+	cleanQueryString: function(method){
+		return this.split('&').filter(function(val){
+			var index = val.indexOf('='),
+			key = index < 0 ? '' : val.substr(0, index),
+			value = val.substr(index + 1);
+			return method ? method.run([key, value]) : $chk(value);
+		}).join('&');
+	}
+
+});
+
+/*
+---
+
+script: URI.js
+
+description: Provides methods useful in managing the window location and uris.
+
+license: MIT-style license
+
+authors:
+- Sebastian Markbåge
+- Aaron Newton
+
+requires:
+- core:1.2.4/Selectors
+- /String.QueryString
+
+provides: URI
+
+...
+*/
+
+var URI = new Class({
+
+	Implements: Options,
+
+	options: {
+		/*base: false*/
+	},
+
+	regex: /^(?:(\w+):)?(?:\/\/(?:(?:([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)?(\.\.?$|(?:[^?#\/]*\/)*)([^?#]*)(?:\?([^#]*))?(?:#(.*))?/,
+	parts: ['scheme', 'user', 'password', 'host', 'port', 'directory', 'file', 'query', 'fragment'],
+	schemes: {http: 80, https: 443, ftp: 21, rtsp: 554, mms: 1755, file: 0},
+
+	initialize: function(uri, options){
+		this.setOptions(options);
+		var base = this.options.base || URI.base;
+		if(!uri) uri = base;
+		
+		if (uri && uri.parsed) this.parsed = $unlink(uri.parsed);
+		else this.set('value', uri.href || uri.toString(), base ? new URI(base) : false);
+	},
+
+	parse: function(value, base){
+		var bits = value.match(this.regex);
+		if (!bits) return false;
+		bits.shift();
+		return this.merge(bits.associate(this.parts), base);
+	},
+
+	merge: function(bits, base){
+		if ((!bits || !bits.scheme) && (!base || !base.scheme)) return false;
+		if (base){
+			this.parts.every(function(part){
+				if (bits[part]) return false;
+				bits[part] = base[part] || '';
+				return true;
+			});
+		}
+		bits.port = bits.port || this.schemes[bits.scheme.toLowerCase()];
+		bits.directory = bits.directory ? this.parseDirectory(bits.directory, base ? base.directory : '') : '/';
+		return bits;
+	},
+
+	parseDirectory: function(directory, baseDirectory) {
+		directory = (directory.substr(0, 1) == '/' ? '' : (baseDirectory || '/')) + directory;
+		if (!directory.test(URI.regs.directoryDot)) return directory;
+		var result = [];
+		directory.replace(URI.regs.endSlash, '').split('/').each(function(dir){
+			if (dir == '..' && result.length > 0) result.pop();
+			else if (dir != '.') result.push(dir);
+		});
+		return result.join('/') + '/';
+	},
+
+	combine: function(bits){
+		return bits.value || bits.scheme + '://' +
+			(bits.user ? bits.user + (bits.password ? ':' + bits.password : '') + '@' : '') +
+			(bits.host || '') + (bits.port && bits.port != this.schemes[bits.scheme] ? ':' + bits.port : '') +
+			(bits.directory || '/') + (bits.file || '') +
+			(bits.query ? '?' + bits.query : '') +
+			(bits.fragment ? '#' + bits.fragment : '');
+	},
+
+	set: function(part, value, base){
+		if (part == 'value'){
+			var scheme = value.match(URI.regs.scheme);
+			if (scheme) scheme = scheme[1];
+			if (scheme && !$defined(this.schemes[scheme.toLowerCase()])) this.parsed = { scheme: scheme, value: value };
+			else this.parsed = this.parse(value, (base || this).parsed) || (scheme ? { scheme: scheme, value: value } : { value: value });
+		} else if (part == 'data') {
+			this.setData(value);
+		} else {
+			this.parsed[part] = value;
+		}
+		return this;
+	},
+
+	get: function(part, base){
+		switch(part){
+			case 'value': return this.combine(this.parsed, base ? base.parsed : false);
+			case 'data' : return this.getData();
+		}
+		return this.parsed[part] || '';
+	},
+
+	go: function(){
+		document.location.href = this.toString();
+	},
+
+	toURI: function(){
+		return this;
+	},
+
+	getData: function(key, part){
+		var qs = this.get(part || 'query');
+		if (!$chk(qs)) return key ? null : {};
+		var obj = qs.parseQueryString();
+		return key ? obj[key] : obj;
+	},
+
+	setData: function(values, merge, part){
+		if (typeof values == 'string'){
+			values = this.getData();
+			values[arguments[0]] = arguments[1];
+		} else if (merge) {
+			values = $merge(this.getData(), values);
+		}
+		return this.set(part || 'query', Hash.toQueryString(values));
+	},
+
+	clearData: function(part){
+		return this.set(part || 'query', '');
+	}
+
+});
+
+URI.prototype.toString = URI.prototype.valueOf = function(){
+	return this.get('value');
+};
+
+URI.regs = {
+	endSlash: /\/$/,
+	scheme: /^(\w+):/,
+	directoryDot: /\.\/|\.$/
+};
+
+URI.base = new URI(document.getElements('base[href]', true).getLast(), {base: document.location});
+
+String.implement({
+
+	toURI: function(options){
+		return new URI(this, options);
+	}
+
+});
+
+/*
+---
+
+script: URI.Relative.js
+
+description: Extends the URI class to add methods for computing relative and absolute urls.
+
+license: MIT-style license
+
+authors:
+- Sebastian MarkbÃ¥ge
+
+
+requires:
+- /Class.refactor
+- /URI
+
+provides: [URI.Relative]
+
+...
+*/
+
+URI = Class.refactor(URI, {
+
+	combine: function(bits, base){
+		if (!base || bits.scheme != base.scheme || bits.host != base.host || bits.port != base.port)
+			return this.previous.apply(this, arguments);
+		var end = bits.file + (bits.query ? '?' + bits.query : '') + (bits.fragment ? '#' + bits.fragment : '');
+
+		if (!base.directory) return (bits.directory || (bits.file ? '' : './')) + end;
+
+		var baseDir = base.directory.split('/'),
+			relDir = bits.directory.split('/'),
+			path = '',
+			offset;
+
+		var i = 0;
+		for(offset = 0; offset < baseDir.length && offset < relDir.length && baseDir[offset] == relDir[offset]; offset++);
+		for(i = 0; i < baseDir.length - offset - 1; i++) path += '../';
+		for(i = offset; i < relDir.length - 1; i++) path += relDir[i] + '/';
+
+		return (path || (bits.file ? '' : './')) + end;
+	},
+
+	toAbsolute: function(base){
+		base = new URI(base);
+		if (base) base.set('directory', '').set('file', '');
+		return this.toRelative(base);
+	},
+
+	toRelative: function(base){
+		return this.get('value', new URI(base));
+	}
+
+});
 
 /*
 ---
@@ -1188,166 +1530,6 @@ var SmoothScroll = Fx.SmoothScroll = new Class({
 /*
 ---
 
-script: Fx.Sort.js
-
-description: Defines Fx.Sort, a class that reorders lists with a transition.
-
-license: MIT-style license
-
-authors:
-- Aaron Newton
-
-requires:
-- core:1.2.4/Element.Dimensions
-- /Fx.Elements
-- /Element.Measure
-
-provides: [Fx.Sort]
-
-...
-*/
-
-Fx.Sort = new Class({
-
-	Extends: Fx.Elements,
-
-	options: {
-		mode: 'vertical'
-	},
-
-	initialize: function(elements, options){
-		this.parent(elements, options);
-		this.elements.each(function(el){
-			if (el.getStyle('position') == 'static') el.setStyle('position', 'relative');
-		});
-		this.setDefaultOrder();
-	},
-
-	setDefaultOrder: function(){
-		this.currentOrder = this.elements.map(function(el, index){
-			return index;
-		});
-	},
-
-	sort: function(newOrder){
-		if ($type(newOrder) != 'array') return false;
-		var top = 0,
-			left = 0,
-			next = {},
-			zero = {},
-			vert = this.options.mode == 'vertical';
-		var current = this.elements.map(function(el, index){
-			var size = el.getComputedSize({styles: ['border', 'padding', 'margin']});
-			var val;
-			if (vert){
-				val = {
-					top: top,
-					margin: size['margin-top'],
-					height: size.totalHeight
-				};
-				top += val.height - size['margin-top'];
-			} else {
-				val = {
-					left: left,
-					margin: size['margin-left'],
-					width: size.totalWidth
-				};
-				left += val.width;
-			}
-			var plain = vert ? 'top' : 'left';
-			zero[index] = {};
-			var start = el.getStyle(plain).toInt();
-			zero[index][plain] = start || 0;
-			return val;
-		}, this);
-		this.set(zero);
-		newOrder = newOrder.map(function(i){ return i.toInt(); });
-		if (newOrder.length != this.elements.length){
-			this.currentOrder.each(function(index){
-				if (!newOrder.contains(index)) newOrder.push(index);
-			});
-			if (newOrder.length > this.elements.length)
-				newOrder.splice(this.elements.length-1, newOrder.length - this.elements.length);
-		}
-		var margin = top = left = 0;
-		newOrder.each(function(item, index){
-			var newPos = {};
-			if (vert){
-				newPos.top = top - current[item].top - margin;
-				top += current[item].height;
-			} else {
-				newPos.left = left - current[item].left;
-				left += current[item].width;
-			}
-			margin = margin + current[item].margin;
-			next[item]=newPos;
-		}, this);
-		var mapped = {};
-		$A(newOrder).sort().each(function(index){
-			mapped[index] = next[index];
-		});
-		this.start(mapped);
-		this.currentOrder = newOrder;
-		return this;
-	},
-
-	rearrangeDOM: function(newOrder){
-		newOrder = newOrder || this.currentOrder;
-		var parent = this.elements[0].getParent();
-		var rearranged = [];
-		this.elements.setStyle('opacity', 0);
-		//move each element and store the new default order
-		newOrder.each(function(index){
-			rearranged.push(this.elements[index].inject(parent).setStyles({
-				top: 0,
-				left: 0
-			}));
-		}, this);
-		this.elements.setStyle('opacity', 1);
-		this.elements = $$(rearranged);
-		this.setDefaultOrder();
-		return this;
-	},
-
-	getDefaultOrder: function(){
-		return this.elements.map(function(el, index){
-			return index;
-		});
-	},
-
-	forward: function(){
-		return this.sort(this.getDefaultOrder());
-	},
-
-	backward: function(){
-		return this.sort(this.getDefaultOrder().reverse());
-	},
-
-	reverse: function(){
-		return this.sort(this.currentOrder.reverse());
-	},
-
-	sortByElements: function(elements){
-		return this.sort(elements.map(function(el){
-			return this.elements.indexOf(el);
-		}, this));
-	},
-
-	swap: function(one, two){
-		if ($type(one) == 'element') one = this.elements.indexOf(one);
-		if ($type(two) == 'element') two = this.elements.indexOf(two);
-		
-		var newOrder = $A(this.currentOrder);
-		newOrder[this.currentOrder.indexOf(one)] = two;
-		newOrder[this.currentOrder.indexOf(two)] = one;
-		return this.sort(newOrder);
-	}
-
-});
-
-/*
----
-
 script: Drag.js
 
 description: The base Drag Class. Can be used to drag and resize Elements using mouse events.
@@ -1697,6 +1879,191 @@ Element.implement({
 
 });
 
+
+/*
+---
+
+script: Slider.js
+
+description: Class for creating horizontal and vertical slider controls.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- core:1.2.4/Element.Dimensions
+- /Class.Binds
+- /Drag
+- /Element.Dimensions
+- /Element.Measure
+
+provides: [Slider]
+
+...
+*/
+
+var Slider = new Class({
+
+	Implements: [Events, Options],
+
+	Binds: ['clickedElement', 'draggedKnob', 'scrolledElement'],
+
+	options: {/*
+		onTick: $empty(intPosition),
+		onChange: $empty(intStep),
+		onComplete: $empty(strStep),*/
+		onTick: function(position){
+			if (this.options.snap) position = this.toPosition(this.step);
+			this.knob.setStyle(this.property, position);
+		},
+		initialStep: 0,
+		snap: false,
+		offset: 0,
+		range: false,
+		wheel: false,
+		steps: 100,
+		mode: 'horizontal'
+	},
+
+	initialize: function(element, knob, options){
+		this.setOptions(options);
+		this.element = document.id(element);
+		this.knob = document.id(knob);
+		this.previousChange = this.previousEnd = this.step = -1;
+		var offset, limit = {}, modifiers = {'x': false, 'y': false};
+		switch (this.options.mode){
+			case 'vertical':
+				this.axis = 'y';
+				this.property = 'top';
+				offset = 'offsetHeight';
+				break;
+			case 'horizontal':
+				this.axis = 'x';
+				this.property = 'left';
+				offset = 'offsetWidth';
+		}
+		
+		this.full = this.element.measure(function(){ 
+			this.half = this.knob[offset] / 2; 
+			return this.element[offset] - this.knob[offset] + (this.options.offset * 2); 
+		}.bind(this));
+		
+		this.min = $chk(this.options.range[0]) ? this.options.range[0] : 0;
+		this.max = $chk(this.options.range[1]) ? this.options.range[1] : this.options.steps;
+		this.range = this.max - this.min;
+		this.steps = this.options.steps || this.full;
+		this.stepSize = Math.abs(this.range) / this.steps;
+		this.stepWidth = this.stepSize * this.full / Math.abs(this.range) ;
+
+		this.knob.setStyle('position', 'relative').setStyle(this.property, this.options.initialStep ? this.toPosition(this.options.initialStep) : - this.options.offset);
+		modifiers[this.axis] = this.property;
+		limit[this.axis] = [- this.options.offset, this.full - this.options.offset];
+
+		var dragOptions = {
+			snap: 0,
+			limit: limit,
+			modifiers: modifiers,
+			onDrag: this.draggedKnob,
+			onStart: this.draggedKnob,
+			onBeforeStart: (function(){
+				this.isDragging = true;
+			}).bind(this),
+			onCancel: function() {
+				this.isDragging = false;
+			}.bind(this),
+			onComplete: function(){
+				this.isDragging = false;
+				this.draggedKnob();
+				this.end();
+			}.bind(this)
+		};
+		if (this.options.snap){
+			dragOptions.grid = Math.ceil(this.stepWidth);
+			dragOptions.limit[this.axis][1] = this.full;
+		}
+
+		this.drag = new Drag(this.knob, dragOptions);
+		this.attach();
+	},
+
+	attach: function(){
+		this.element.addEvent('mousedown', this.clickedElement);
+		if (this.options.wheel) this.element.addEvent('mousewheel', this.scrolledElement);
+		this.drag.attach();
+		return this;
+	},
+
+	detach: function(){
+		this.element.removeEvent('mousedown', this.clickedElement);
+		this.element.removeEvent('mousewheel', this.scrolledElement);
+		this.drag.detach();
+		return this;
+	},
+
+	set: function(step){
+		if (!((this.range > 0) ^ (step < this.min))) step = this.min;
+		if (!((this.range > 0) ^ (step > this.max))) step = this.max;
+
+		this.step = Math.round(step);
+		this.checkStep();
+		this.fireEvent('tick', this.toPosition(this.step));
+		this.end();
+		return this;
+	},
+
+	clickedElement: function(event){
+		if (this.isDragging || event.target == this.knob) return;
+
+		var dir = this.range < 0 ? -1 : 1;
+		var position = event.page[this.axis] - this.element.getPosition()[this.axis] - this.half;
+		position = position.limit(-this.options.offset, this.full -this.options.offset);
+
+		this.step = Math.round(this.min + dir * this.toStep(position));
+		this.checkStep();
+		this.fireEvent('tick', position);
+		this.end();
+	},
+
+	scrolledElement: function(event){
+		var mode = (this.options.mode == 'horizontal') ? (event.wheel < 0) : (event.wheel > 0);
+		this.set(mode ? this.step - this.stepSize : this.step + this.stepSize);
+		event.stop();
+	},
+
+	draggedKnob: function(){
+		var dir = this.range < 0 ? -1 : 1;
+		var position = this.drag.value.now[this.axis];
+		position = position.limit(-this.options.offset, this.full -this.options.offset);
+		this.step = Math.round(this.min + dir * this.toStep(position));
+		this.checkStep();
+	},
+
+	checkStep: function(){
+		if (this.previousChange != this.step){
+			this.previousChange = this.step;
+			this.fireEvent('change', this.step);
+		}
+	},
+
+	end: function(){
+		if (this.previousEnd !== this.step){
+			this.previousEnd = this.step;
+			this.fireEvent('complete', this.step + '');
+		}
+	},
+
+	toStep: function(position){
+		var step = (position + this.options.offset) * this.stepSize / this.full * this.steps;
+		return this.options.steps ? Math.round(step -= step % this.stepSize) : step;
+	},
+
+	toPosition: function(step){
+		return (this.full * Math.abs(this.min - step)) / (this.steps * this.stepSize) - this.options.offset;
+	}
+
+});
 
 /*
 ---

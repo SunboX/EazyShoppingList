@@ -15,7 +15,7 @@ db.execute('SELECT id, name, items FROM shopping_lists WHERE id = ?', [Mobile.Ap
 
 	while(row = rs.next()){
 		title = row.get('name');
-		items = row.get('items').trim().split("\n");
+		items = row.get('items', '').trim().split("\n");
 	}
 	
 	var header = new Mobile.GUI.Header({

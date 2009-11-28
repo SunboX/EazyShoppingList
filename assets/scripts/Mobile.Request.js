@@ -18,7 +18,6 @@ Mobile.Request.Screen = new Class({
 		retries: 0,
 		timeout: 0,
 		link: 'ignore',
-		callbackKey: 'callback',
 		injectScript: document.head
 	},
 
