@@ -161,10 +161,8 @@ Database.ResultSet = new Class({
 		this.rs = rs;
 		this.index = 0;
 		
-		if(this.html5)
-			this.lastInsertedId = this.rs.insertId + 0;
-		else
-			this.lastInsertedId = this.db.lastInsertRowId + 0;
+		if(!this.html5)
+			this.gearsInsertId = this.db.lastInsertRowId + 0;
 	},
 	
 	next: function(){
@@ -185,7 +183,10 @@ Database.ResultSet = new Class({
 	},
 	
 	lastInsertId: function(){
-		return this.lastInsertedId;
+		if(this.html5)
+			return this.rs.insertId;
+			
+		return this.gearsInsertId;
 	}
 });
 
