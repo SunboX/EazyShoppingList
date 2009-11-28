@@ -21,9 +21,10 @@ window.addEvents({
 		
 		Mobile.Application.run();
 	},
+	
 	'load': function(){
 	
 		// hide toolbar in iphone
-		window.scrollTo(0, 1).delay(100);
+		(function(){ window.scrollTo(0, 1); }).delay(100);
 	}
 });
