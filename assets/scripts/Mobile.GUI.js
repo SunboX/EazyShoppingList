@@ -103,6 +103,7 @@ Mobile.GUI.List = new Class({
 		this.element = new Element('ul', {
 			'class': 'field'
 		});
+		this.length = 0;
 	},
 	
 	addItem: function(text, options){
@@ -115,6 +116,18 @@ Mobile.GUI.List = new Class({
 		
 		if($chk(options.type))
 			item.addClass(options.type);
+		
+		if($chk(options.icon))	
+			new Element('img', {
+				src: options.icon,
+				'class': 'ico'
+			}).inject(item, 'top');
+			
+		item.setIcon = function(icon){
+			this.getElement('img').set('src', icon);
+		}
+		
+		this.length++;
 		
 		return item;
 	}

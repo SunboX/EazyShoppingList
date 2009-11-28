@@ -42,11 +42,19 @@ doneBtn.addEvent('click', function(e){
 	}
 	
 	if (done) {
-		var db = Mobile.Application.getDB();
 		
-		db.execute('INSERT INTO shopping_lists (name, items) VALUES (?, ?)', [nameField.get('value'), itemsField.get('value')], function(){
-			
-			Mobile.Application.loadScreen('main');
+		var db = Mobile.Application.getDB();
+		var inserted = 0;
+		var items = itemsField.get('value', '').trim().split("\n");
+		
+		db.execute('INSERT INTO shopping_list (name) VALUES (?)', [nameField.get('value')], function(rs){
+			var listId = rs.lastInsertId();
+			items.each(function(item, i){
+				db.execute('INSERT INTO shopping_list_item (item, position, list_id) VALUES (?, ?, ?)', [item, i, listId], function(){
+					if((++inserted) == items.length)
+						Mobile.Application.loadScreen('main');
+				});
+			});
 		});
 	}
 });

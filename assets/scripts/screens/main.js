@@ -18,7 +18,7 @@ var shopListsList = new Mobile.GUI.List();
 
 var db = Mobile.Application.getDB();
 		
-db.execute('SELECT id, name, items FROM shopping_lists', null, function(rs){
+db.execute('SELECT id, name FROM shopping_list', null, function(rs){
 	while(row = rs.next()){
 		var item = shopListsList.addItem(row.get('name'), {
 			type: 'arrow',
@@ -29,13 +29,14 @@ db.execute('SELECT id, name, items FROM shopping_lists', null, function(rs){
 			Mobile.Application.loadScreen('viewList');
 		});
 	}
+	
+	if(shopListsList.length > 0)
+		scr.addControl(shopListsList);
+	
+	newBtn.addEvent('click', function(e){
+		e.stop();
+		Mobile.Application.loadScreen('newList');
+	});
+	
+	Mobile.Application.showScreen(scr);
 });
-
-scr.addControl(shopListsList);
-
-newBtn.addEvent('click', function(e){
-	e.stop();
-	Mobile.Application.loadScreen('newList');
-});
-
-Mobile.Application.showScreen(scr);

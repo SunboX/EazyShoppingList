@@ -137,12 +137,12 @@ var Database = new Class({
 			this.db.transaction(function (transaction) {
 				transaction.executeSql(sql, values, function(transaction, rs){
 					if(callback)
-						callback(new Database.ResultSet(rs));
+						callback(new Database.ResultSet(rs, this));
 				}, errorCallback);
 			});
 		else
 			if(callback)
-				callback(new Database.ResultSet(this.db.execute(sql, values)));
+				callback(new Database.ResultSet(this.db.execute(sql, values), this.db));
 
 			else
 				this.db.execute(sql, values);
@@ -155,10 +155,16 @@ var Database = new Class({
 
 Database.ResultSet = new Class({
 	
-	initialize: function(rs){
+	initialize: function(rs, db){
 		this.html5 = Browser.Database.name == 'html5';
+		this.db = db;
 		this.rs = rs;
 		this.index = 0;
+		
+		if(this.html5)
+			this.lastInsertedId = this.rs.insertId + 0;
+		else
+			this.lastInsertedId = this.db.lastInsertRowId + 0;
 	},
 	
 	next: function(){
@@ -176,6 +182,10 @@ Database.ResultSet = new Class({
 			}
 		}
 		return row;
+	},
+	
+	lastInsertId: function(){
+		return this.lastInsertedId;
 	}
 });
 
