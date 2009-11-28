@@ -4,18 +4,26 @@
  * @license http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
 
-window.addEvent('domready', function(){
-	
-	Mobile.Application.addEvents({
+window.addEvents({
+
+	'domready': function(){
 		
-		'notRegistered': function(){
-			Mobile.Application.loadScreen('signup');
-		},
+		Mobile.Application.addEvents({
 		
-		'startUp': function(){
-			Mobile.Application.loadScreen('main');
-		}
-	});
+			'notRegistered': function(){
+				Mobile.Application.loadScreen('signup');
+			},
+			
+			'startUp': function(){
+				Mobile.Application.loadScreen('main');
+			}
+		});
+		
+		Mobile.Application.run();
+	},
+	'load': function(){
 	
-	Mobile.Application.run();
+		// hide toolbar in iphone
+		window.scrollTo(0, 1).delay(100);
+	}
 });
