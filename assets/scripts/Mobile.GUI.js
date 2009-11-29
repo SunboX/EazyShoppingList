@@ -179,7 +179,7 @@ Mobile.GUI.Form = new Class({
 		}
 		
 		field.addEvents({
-			'click': function(e){
+			'focus': function(e){
 				this.setError(false);
 				if(this.get('value') == this.get('defaultValue'))
 					this.set('value', '');
@@ -228,7 +228,7 @@ Mobile.GUI.Form = new Class({
 		}
 		
 		field.addEvents({
-			'click': function(e){
+			'focus': function(e){
 				this.setError(false);
 				if(this.get('value') == this.get('defaultValue'))
 					this.set('value', '');
