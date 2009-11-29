@@ -10,12 +10,11 @@ Mobile.Application = new Class({
 
 	Implements: [Events],
 	
-	lastScreen: null,
 	currentScreen: null,
-	nextScreen: null,
  	
 	initialize: function(){
 		this.screenRequest = new Mobile.Request.Screen();
+		this.initHistory();
 	},
 	
 	run: function(){},
@@ -33,25 +32,52 @@ Mobile.Application = new Class({
 	},
 	
 	removeControl: function(control){
-		this.lastScreen = control;
 		if($chk(control))
 			control.hide();
 	},
 	
 	loadScreen: function(scrName){
+		this.fireEvent('onScreenLoad', scrName);
 		this.screenRequest.send({
 			url: 'assets/scripts/screens/' + scrName + '.js'
 		});
 	},
 	
 	loadLastScreen: function(){
-		this.loadScreen(this.lastScreen.getName());
+		history.back();
 	},
 	
 	showScreen: function(scr){
+		this.fireEvent('onScreenLoaded', scr.getName());
+		this.fireEvent('onScreenChange', scr);
 		this.removeControl(this.currentScreen);
 		this.addControl(scr);
 		this.screenRequest.success();
+		this.fireEvent('onScreenChanged', scr);
+	},
+	
+	 initHistory: function() {
+		this.fireEvent('onHistoryInit');
+		
+		this.historyKey = 'screen';
+		 
+		this.history = new History.Route({
+			pattern: this.historyKey + '\\(([^)]+)\\)',
+			generate: function(values) {
+				return [this.historyKey, '(', values[0], ')'].join('');
+			}.bind(this),
+			onMatch: function(values, defaults) {
+				this.loadScreen(values[0]);
+			}.bind(this)
+		});
+		
+		History.start();
+		
+		this.addEvent('onScreenLoaded', function(scrName){
+			this.history.setValue(0, scrName);
+		}.bind(this));
+		
+		this.fireEvent('onHistoryInited');
 	}
 });
 
