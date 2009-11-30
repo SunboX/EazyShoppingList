@@ -8,13 +8,20 @@ var Mobile = Mobile || {};
  
 Mobile.Application = new Class({
 
-	Implements: [Events],
+	Implements: [Options, Events],
 	
-	currentScreen: null,
+	options: {},
+	
+	currentScreen: {
+		name: '',
+		parameters: {},
+		control: {}
+	},
  	
 	initialize: function(){
 		this.screenRequest = new Mobile.Request.Screen();
 		this.initHistory();
+		this.addEvent('screenLoaded', this.changeScreen);
 	},
 	
 	run: function(){},
@@ -27,19 +34,21 @@ Mobile.Application = new Class({
 	},
 	
 	addControl: function(control){
-		this.currentScreen = control;
+		this.currentScreen.control = control;
 		control.getElement().inject(this.getElement());
 	},
 	
 	removeControl: function(control){
-		if($chk(control))
+		if($chk(control) && control.hide)
 			control.hide();
 	},
 	
-	loadScreen: function(scrName){
-		this.fireEvent('onScreenLoad', scrName);
+	loadScreen: function(name, parameters){
+		this.currentScreen.name = name;
+		this.currentScreen.parameters = parameters || {};
+		this.fireEvent('onScreenLoad', this.currentScreen);
 		this.screenRequest.send({
-			url: 'assets/scripts/screens/' + scrName + '.js'
+			url: 'assets/scripts/screens/' + name + '.js'
 		});
 	},
 	
@@ -47,16 +56,20 @@ Mobile.Application = new Class({
 		history.back();
 	},
 	
-	showScreen: function(scr){
-		this.fireEvent('onScreenLoaded', scr.getName());
-		this.fireEvent('onScreenChange', scr);
-		this.removeControl(this.currentScreen);
-		this.addControl(scr);
-		this.screenRequest.success();
-		this.fireEvent('onScreenChanged', scr);
+	showScreen: function(scrControl){
+		this.fireEvent('onScreenLoaded', scrControl);
+		this.changeScreen(scrControl);
 	},
 	
-	 initHistory: function() {
+	changeScreen: function(scrControl){
+		this.fireEvent('onScreenChange', this.currentScreen);
+		this.removeControl(this.currentScreen.control);
+		this.currentScreen.control = scrControl;
+		this.addControl(this.currentScreen.control);
+		this.fireEvent('onScreenChanged', this.currentScreen);
+	},
+	
+	initHistory: function() {
 		this.fireEvent('onHistoryInit');
 		
 		this.historyKey = 'screen';
@@ -66,15 +79,16 @@ Mobile.Application = new Class({
 			generate: function(values) {
 				return [this.historyKey, '(', values[0], ')'].join('');
 			}.bind(this),
-			onMatch: function(values, defaults) {
-				this.loadScreen(values[0]);
+			onMatch: function(values){
+				var ro = Mobile.Routing.parse(values[0]);
+				this.loadScreen(ro.name, ro.parameters);
 			}.bind(this)
 		});
 		
 		History.start();
 		
-		this.addEvent('onScreenLoaded', function(scrName){
-			this.history.setValue(0, scrName);
+		this.addEvent('onScreenChanged', function(scr){
+			this.history.setValue(0, Mobile.Routing.gen(this.currentScreen.name, this.currentScreen.parameters));
 		}.bind(this));
 		
 		this.fireEvent('onHistoryInited');

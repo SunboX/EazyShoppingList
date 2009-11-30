@@ -6,6 +6,8 @@
  
 Mobile.Application.extend({
 	
+	options: $merge(Mobile.Application.options, {}),
+	
 	config: {
 		is_registered: true
 	},
@@ -33,11 +35,7 @@ Mobile.Application.extend({
 		return this.db;
 	},
 	
-	setCurrentList: function(id){
-		this.currentListId = id.toInt();
-	},
-	
 	getCurrentList: function(){
-		return this.currentListId;
+		return this.currentScreen.parameters.id;
 	}
 });

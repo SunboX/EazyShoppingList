@@ -25,8 +25,10 @@ db.execute('SELECT id, name FROM shopping_list', null, function(rs){
 			id: 'list-' + row.get('id')
 		});
 		item.addEvent('click', function(e){
-			Mobile.Application.setCurrentList(this.get('id').replace(/list-/, ''));
-			Mobile.Application.loadScreen('viewList');
+			var id = this.get('id').replace(/list-/, '');
+			Mobile.Application.loadScreen('viewList', {
+				id: id
+			});
 		});
 	}
 	

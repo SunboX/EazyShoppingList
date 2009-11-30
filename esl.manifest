@@ -35,6 +35,7 @@ assets/scripts/main.js
 assets/scripts/Mobile.Application.js
 assets/scripts/Mobile.GUI.js
 assets/scripts/Mobile.Request.js
+assets/scripts/Mobile.Routing.js
 assets/scripts/mootools-core.js
 assets/scripts/mootools-more.js
     
