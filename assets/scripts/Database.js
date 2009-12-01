@@ -56,7 +56,7 @@ var Database = new Class({
     
     initialize: function(name){
 		if (Browser.Database.name == 'unknown') {
-			if(confirm('No valid database found! Installing Google Gears Database instead?'))
+			if(confirm('No valid database found! Installing Google Gears database instead?'))
 			{
 				new URI('http://gears.google.com/?action=install&message=&return=' + new URI(document.location.href).toAbsolute().toString()).go();
 			}
@@ -71,23 +71,32 @@ var Database = new Class({
 			this.db = google.gears.factory.create('beta.database');
 			this.db.open(name);
 		}
+		
+		this.lastInsertRowId = 0;
 	},
 	
 	execute: function(sql, values, callback, errorCallback){
 		values = values || [];
-		if(this.html5)
-			this.db.transaction(function (transaction) {
+		if (this.html5) 
+			this.db.transaction(function(transaction){
 				transaction.executeSql(sql, values, function(transaction, rs){
-					if(callback)
-						callback(new Database.ResultSet(rs, this));
-				}, errorCallback);
-			});
-		else
-			if(callback)
-				callback(new Database.ResultSet(this.db.execute(sql, values), this.db));
-
-			else
-				this.db.execute(sql, values);
+					try {
+						this.lastInsertRowId = rs.insertId;
+					} catch(e) {}
+					if (callback) 
+						callback(new Database.ResultSet(rs));
+				}.bind(this), errorCallback);
+			}.bind(this));
+		else {
+			var rs = this.db.execute(sql, values);
+			this.lastInsertRowId = this.db.lastInsertRowId;
+			if (callback)
+				callback(new Database.ResultSet(rs));
+		}
+	},
+	
+	lastInsertId: function(){
+		return this.lastInsertRowId;
 	},
 	
 	close: function(){
@@ -97,14 +106,10 @@ var Database = new Class({
 
 Database.ResultSet = new Class({
 	
-	initialize: function(rs, db){
+	initialize: function(rs){
 		this.html5 = Browser.Database.name == 'html5';
-		this.db = db;
 		this.rs = rs;
 		this.index = 0;
-		
-		if(!this.html5)
-			this.gearsInsertId = this.db.lastInsertRowId + 0;
 	},
 	
 	next: function(){
@@ -122,13 +127,6 @@ Database.ResultSet = new Class({
 			}
 		}
 		return row;
-	},
-	
-	lastInsertId: function(){
-		if(this.html5)
-			return this.rs.insertId;
-			
-		return this.gearsInsertId;
 	}
 });
 

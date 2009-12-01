@@ -48,7 +48,7 @@ doneBtn.addEvent('click', function(e){
 		var items = itemsField.get('value', '').trim().split("\n");
 		
 		db.execute('INSERT INTO shopping_list (name) VALUES (?)', [nameField.get('value')], function(rs){
-			var listId = rs.lastInsertId();
+			var listId = db.lastInsertId();
 			items.each(function(item, i){
 				db.execute('INSERT INTO shopping_list_item (item, position, list_id) VALUES (?, ?, ?)', [item, i, listId], function(){
 					if((++inserted) == items.length)
