@@ -21,9 +21,9 @@ window.addEvent('domready', function(){
 			var factory = null;
 			
 			// Firefox
-			if ($type(GearsFactory) != 'undefined') factory = new GearsFactory();
+			if (window.GearsFactory) factory = new GearsFactory();
 			else {
-				if(Browser.Engines.trident) {
+				if(Browser.Engine.trident) {
 					// IE
 					factory = new ActiveXObject('Gears.Factory');
 					// privateSetGlobalObject is only required and supported on IE Mobile on WinCE.
@@ -72,7 +72,7 @@ var Database = new Class({
 			{
 				new URI(
 					'http://gears.google.com/?action=install&return=' + 
-					escape(new URI(document.location.href).toAbsolute().toString())
+					escape(new URI(document.location.href).toString())
 				).go();
 			}
 			return;
@@ -91,6 +91,7 @@ var Database = new Class({
 	},
 	
 	execute: function(sql, values, callback, errorCallback){
+		if(!this.db) return;
 		values = values || [];
 		if (this.html5) 
 			this.db.transaction(function(transaction){
