@@ -217,7 +217,7 @@ Mobile.GUI.Form = new Class({
 		}).store('label', label).set('text', value).inject(item);
 		
 		field.isEmpty = function(){
-			return this.get('value') == this.get('defaultValue');
+			return this.get('value') == this.retrieve('label');
 		}
 			
 		field.setError = function(hasError){
