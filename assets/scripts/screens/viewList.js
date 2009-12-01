@@ -8,16 +8,15 @@ var scr = new Mobile.GUI.Screen('viewList');
 
 var db = Mobile.Application.getDB();
 
-db.execute('SELECT id, name FROM shopping_list WHERE id = ?', [Mobile.Application.getCurrentList()], function(rs){
+db.execute('SELECT name FROM shopping_list WHERE id = ?', [Mobile.Application.getCurrentListId()], function(rs){
 	
 	var title = '';
 
 	while(row = rs.next()){
 		title = row.get('name');
-		items = row.get('items', '').trim().split("\n");
 	}
 	
-	db.execute('SELECT id, item, checked FROM shopping_list_item WHERE list_id = ? ORDER BY position', [Mobile.Application.getCurrentList()], function(rs){
+	db.execute('SELECT id, item, checked FROM shopping_list_item WHERE list_id = ? ORDER BY position', [Mobile.Application.getCurrentListId()], function(rs){
 	
 		var items = [];
 
@@ -54,19 +53,21 @@ db.execute('SELECT id, name FROM shopping_list WHERE id = ?', [Mobile.Applicatio
 		
 		backBtn.addEvent('click', function(e){
 			e.stop();
-			Mobile.Application.loadLastScreen();
+			Mobile.Application.loadScreen('main');
 		});
 		
 		editBtn.addEvent('click', function(e){
 			e.stop();
-			alert('Not implemented yet!');
+			Mobile.Application.loadScreen('editList', {
+				id: Mobile.Application.getCurrentListId()
+			});
 		});
 		
 		var deleteBtn = new Mobile.GUI.Button(MooTools.lang.get('ESL', 'Delete this List'));
 		
 		deleteBtn.addEvent('click', function(e){
-			db.execute('DELETE FROM shopping_list_item WHERE list_id = ?', [Mobile.Application.getCurrentList()], function(rs){
-				db.execute('DELETE FROM shopping_list WHERE id = ?', [Mobile.Application.getCurrentList()], function(rs){
+			db.execute('DELETE FROM shopping_list_item WHERE list_id = ?', [Mobile.Application.getCurrentListId()], function(rs){
+				db.execute('DELETE FROM shopping_list WHERE id = ?', [Mobile.Application.getCurrentListId()], function(rs){
 					Mobile.Application.loadScreen('main');
 				});
 			});

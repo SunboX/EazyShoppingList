@@ -212,10 +212,9 @@ Mobile.GUI.Form = new Class({
 		
 		var field = new Element('textarea', {
 			name: name,
-			value: value,
 			defaultValue: label,
 			id: options.id || 'fe-' + $time()
-		}).inject(item);
+		}).store('label', label).set('text', value).inject(item);
 		
 		field.isEmpty = function(){
 			return this.get('value') == this.get('defaultValue');
@@ -230,12 +229,12 @@ Mobile.GUI.Form = new Class({
 		field.addEvents({
 			'focus': function(e){
 				this.setError(false);
-				if(this.get('value') == this.get('defaultValue'))
+				if(this.get('value') == this.retrieve('label'))
 					this.set('value', '');
 			},
 			'blur': function(e){
 				if(this.get('value') == '')
-					this.set('value', this.get('defaultValue'));
+					this.set('value', this.retrieve('label'));
 			}
 		});
 		

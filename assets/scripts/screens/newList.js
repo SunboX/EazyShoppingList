@@ -24,7 +24,7 @@ backBtn.addEvent('click', function(e){
 var form = new Mobile.GUI.Form();
 
 var nameField = form.addTextfield('name', MooTools.lang.get('ESL', 'listName'));
-var itemsField = form.addTextarea('items', MooTools.lang.get('ESL', 'newListContentMsg'));
+var itemsField = form.addTextarea('items', MooTools.lang.get('ESL', 'listContentMsg'));
 
 doneBtn.addEvent('click', function(e){
 	e.stop();

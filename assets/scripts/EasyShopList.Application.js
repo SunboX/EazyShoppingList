@@ -35,7 +35,7 @@ Mobile.Application.extend({
 		return this.db;
 	},
 	
-	getCurrentList: function(){
+	getCurrentListId: function(){
 		return this.currentScreen.parameters.id;
 	}
 });
