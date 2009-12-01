@@ -27,8 +27,8 @@ assets/images/toolButton.png
 assets/images/whiteButton.png
     
 assets/scripts/Database.js
-assets/scripts/EasyShopList.Application.js
-assets/scripts/EasyShopList.Lang.js
+assets/scripts/EazyShoppingList.Application.js
+assets/scripts/EazyShoppingList.Lang.js
 assets/scripts/History.js
 assets/scripts/History.Routing.js
 assets/scripts/main.js
