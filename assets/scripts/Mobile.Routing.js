@@ -20,15 +20,15 @@ Mobile.Routing = {
     },
     
     parse: function(str){
+		var ret = {name: '', parameters: {}};
         match = str.match(this.regex);
-		if(match == null || match.lenth < 2)  return {name: '', parameters: {}};
-        var name = match[1];
-		if(!$chk(match[2]))  return {name: name, parameters: {}};
-        var params = {};
+		if(match == null || match.lenth < 2)  return ret;
+        ret.name = match[1];
+		if(!$chk(match[2]))  return ret;
         match[2].split(':').each(function(param){
             var kv = param.split('=');
-            params[kv[0]] = kv[1];
+            ret.parameters[kv[0]] = kv[1];
         });
-        return {name: name, parameters: params};
+        return ret;
     }
 };
