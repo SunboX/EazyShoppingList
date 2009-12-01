@@ -53,12 +53,27 @@ window.addEvent('domready', function(){
 })
 
 var Database = new Class({
+	
+	Implements: [Options],
+	
+	options: {
+		installGoogleGears: true
+	},
     
-    initialize: function(name){
+    initialize: function(name, options){
+		
+		if (!Browser.loaded)
+			alert('Database: Please wait until the DOM is ready!');
+		
+		this.setOptions(options);
+		
 		if (Browser.Database.name == 'unknown') {
-			if(confirm('No valid database found! Installing Google Gears database instead?'))
+			if(this.options.installGoogleGears && confirm('No valid database found! Do you want to install Google Gears database?'))
 			{
-				new URI('http://gears.google.com/?action=install&message=&return=' + new URI(document.location.href).toAbsolute().toString()).go();
+				new URI(
+					'http://gears.google.com/?action=install&return=' + 
+					escape(new URI(document.location.href).toAbsolute().toString())
+				).go();
 			}
 			return;
 		}
