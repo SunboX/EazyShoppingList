@@ -26,8 +26,6 @@ db.execute('SELECT id, name FROM shopping_list WHERE id = ?', [Mobile.Applicatio
 			itemsContent += row.get('item', '') + "\n";
 		}
 		
-		db.execute('DELETE FROM shopping_list_item WHERE list_id = ?', [Mobile.Application.getCurrentListId()]);
-		
 		var header = new Mobile.GUI.Header({
 			title: MooTools.lang.get('ESL', 'editList')
 		});
@@ -64,8 +62,8 @@ db.execute('SELECT id, name FROM shopping_list WHERE id = ?', [Mobile.Applicatio
 			}
 			
 			if (done) {
-				
-				var db = Mobile.Application.getDB();
+				db.execute('DELETE FROM shopping_list_item WHERE list_id = ?', [Mobile.Application.getCurrentListId()]);
+		
 				var inserted = 0;
 				var items = itemsField.get('value', '').trim().split("\n");
 				
