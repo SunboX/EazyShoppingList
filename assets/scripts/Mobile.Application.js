@@ -32,11 +32,7 @@ Mobile.Application = new Class({
 			var s = window.getSize();
 			this.container = new Element('div', {
 				styles: {
-					position: 'absolute',
-					left: 0,
-					top: 0,
 					width: s.x,
-					height: s.y,
 					overflow: 'hidden'
 				}
 			}).inject(document.body);
