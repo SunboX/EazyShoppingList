@@ -194,7 +194,7 @@ Mobile.GUI.Form = new Class({
 	},
 	
 	addTextarea: function(name, label, options){
-		options = options || {};
+		options = $merge({resize: true}, options);
 		
 		if (!$chk(name)) {
 			alert('Mobile.GUI.Form.addTextarea: No name found!');
@@ -237,6 +237,19 @@ Mobile.GUI.Form = new Class({
 					this.set('value', this.retrieve('label'));
 			}
 		});
+		
+		var resize = function(){
+			var s = this.getSize();
+			var ss = this.getScrollSize();
+			if(s.y < ss.y) this.setStyle('height', ss.y);
+		}
+		
+		if(options.resize){
+			field.addEvents({
+				'focus': resize,
+				'keyup': resize
+			});
+		}
 		
 		return field;
 	}
