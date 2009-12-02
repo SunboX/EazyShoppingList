@@ -16,12 +16,12 @@ Mobile.GUI.Control = new Class({
 	
 	element: {},
 	
-	getElement: function(){
+	toElement: function(){
 		return this.element;
 	},
 	
 	hide: function(){
-		this.getElement().dispose();
+		this.toElement().dispose();
 	}
 });
 
@@ -49,7 +49,7 @@ Mobile.GUI.Screen = new Class({
 	},
 	
 	addControl: function(control){
-		control.getElement().inject(this.element);
+		control.toElement().inject(this.element);
 	}
 });
 

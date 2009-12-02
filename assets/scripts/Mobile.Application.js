@@ -15,6 +15,7 @@ Mobile.Application = new Class({
 	currentScreen: {
 		name: '',
 		parameters: {},
+		direction: '',
 		control: {}
 	},
  	
@@ -26,26 +27,29 @@ Mobile.Application = new Class({
 	
 	run: function(){},
 	
-	getElement: function(){
-		if(!$chk(this.container))
-			this.container = $(document.body);
+	toElement: function(){
+		if (!$chk(this.container)) {
+			var s = window.getSize();
+			this.container = new Element('div', {
+				styles: {
+					position: 'absolute',
+					left: 0,
+					top: 0,
+					width: s.x,
+					height: s.y,
+					overflow: 'hidden'
+				}
+			}).inject(document.body);
+		}
 			
 		return this.container;
 	},
 	
-	addControl: function(control){
-		this.currentScreen.control = control;
-		control.getElement().inject(this.getElement());
-	},
-	
-	removeControl: function(control){
-		if($chk(control) && control.hide)
-			control.hide();
-	},
-	
-	loadScreen: function(name, parameters){
+	loadScreen: function(name, direction, parameters){
+		if(this.currentScreen.name == name) return;
 		this.currentScreen.name = name;
 		this.currentScreen.parameters = parameters || {};
+		this.currentScreen.direction = direction || 'prev';
 		this.fireEvent('onScreenLoad', this.currentScreen);
 		this.screenRequest.send({
 			url: 'assets/scripts/screens/' + name + '.js'
@@ -63,10 +67,38 @@ Mobile.Application = new Class({
 	
 	changeScreen: function(scrControl){
 		this.fireEvent('onScreenChange', this.currentScreen);
-		this.removeControl(this.currentScreen.control);
+		var s = this.toElement().getSize();
+		var d = this.currentScreen.direction;
+		var oldControl = this.currentScreen.control;
 		this.currentScreen.control = scrControl;
-		this.addControl(this.currentScreen.control);
-		this.fireEvent('onScreenChanged', this.currentScreen);
+		this.currentScreen.control.toElement().inject(this.toElement());
+		if ($chk(oldControl.toElement)) {
+			if (oldControl.getName() == scrControl.getName()) {
+				this.fireEvent('onScreenChanged', this.currentScreen);
+				return;
+			}
+			oldControl.toElement().set('tween', {duration: 'short'});
+			scrControl.toElement().set('tween', {duration: 'short'});
+			oldControl.toElement().get('tween').addEvent('complete', function(){
+				if($chk(oldControl) && oldControl.hide)
+					oldControl.hide();
+				this.fireEvent('onScreenChanged', this.currentScreen);
+			}.bind(this));
+			scrControl.toElement().setStyles({
+				position: 'absolute',
+				top: 0,
+				left: d == 'next' ? s.x : -s.x,
+				width: s.x,
+			});
+			if (d == 'next') {
+				oldControl.toElement().tween('left', [0, -s.x]);
+				scrControl.toElement().tween('left', [s.x, 0]);
+			}
+			else {
+				oldControl.toElement().tween('left', [0, s.x]);
+				scrControl.toElement().tween('left', [-s.x, 0]);
+			}
+		}
 	},
 	
 	initHistory: function() {
@@ -81,14 +113,14 @@ Mobile.Application = new Class({
 			}.bind(this),
 			onMatch: function(values){
 				var ro = Mobile.Routing.parse(values[0]);
-				this.loadScreen(ro.name, ro.parameters);
+				this.loadScreen(ro.name, (ro.direction == 'prev' ? 'next' : 'prev'), ro.parameters);
 			}.bind(this)
 		});
 		
 		History.start();
 		
 		this.addEvent('onScreenChanged', function(scr){
-			this.history.setValue(0, Mobile.Routing.gen(this.currentScreen.name, this.currentScreen.parameters));
+			this.history.setValue(0, Mobile.Routing.gen(this.currentScreen.name, this.currentScreen.direction, this.currentScreen.parameters));
 		}.bind(this));
 		
 		this.fireEvent('onHistoryInited');

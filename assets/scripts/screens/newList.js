@@ -52,7 +52,7 @@ doneBtn.addEvent('click', function(e){
 			items.each(function(item, i){
 				db.execute('INSERT INTO shopping_list_item (item, position, list_id) VALUES (?, ?, ?)', [item, i, listId], function(){
 					if((++inserted) == items.length)
-						Mobile.Application.loadScreen('main');
+						Mobile.Application.loadScreen('main', 'prev');
 				});
 			});
 		});

@@ -17,12 +17,14 @@
 	body {
 		background: rgb(197,204,211) url(../images/stripes.png);
 		font-family: Helvetica;
-		margin: 0 0 0 10px;
+		margin: 0;
 		padding: 0;
 		-webkit-user-select: none;
 		-webkit-text-size-adjust: none;
 		}
-
+		
+		div.screen {
+		}
 
 		/* standard header on body */
 		
@@ -52,7 +54,7 @@
 			border-top: 1px solid rgb(205,213,223);
 			border-bottom: 1px solid rgb(46,55,68);
 			padding: 10px;
-			margin: 0 0 0 -10px;
+			margin: 0;
 			min-height: 44px;
 			-webkit-box-sizing: border-box;
 			}
@@ -162,7 +164,7 @@
 			border: 1px solid #B4B4B4;
 			font: bold 17px Helvetica;
 			padding: 0;	   
-			margin: 15px 10px 17px 0;
+			margin: 15px 10px 17px 10px;
 			-webkit-border-radius: 8px;
 			}
 		
@@ -549,7 +551,7 @@
 											text-shadow: #000 0 1px 0;
 											border-width: 0px 14px 0px 14px;
 											display: block;
-											margin: 3px 0;
+											margin: 3px 0 3px 10px;
 											}
 
 											.green { -webkit-border-image: url(../images/greenButton.png) 0 14 0 14; }
@@ -574,6 +576,7 @@
 		
 			ul.form li {
 				padding: 7px 10px;
+				margin: 0;
 			}
 			
 			ul.form li.error { border: 2px solid red; }			
