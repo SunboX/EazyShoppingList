@@ -53,7 +53,7 @@ db.execute('SELECT name FROM shopping_list WHERE id = ?', [Mobile.Application.ge
 		
 		backBtn.addEvent('click', function(e){
 			e.stop();
-			Mobile.Application.loadScreen('main');
+			Mobile.Application.loadScreen('main', 'prev');
 		});
 		
 		editBtn.addEvent('click', function(e){

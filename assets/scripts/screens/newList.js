@@ -18,7 +18,7 @@ scr.addControl(header);
 
 backBtn.addEvent('click', function(e){
 	e.stop();
-	Mobile.Application.loadLastScreen();
+	Mobile.Application.loadScreen('main', 'prev');
 });
 
 var form = new Mobile.GUI.Form();

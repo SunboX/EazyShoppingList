@@ -38,7 +38,9 @@ db.execute('SELECT id, name FROM shopping_list WHERE id = ?', [Mobile.Applicatio
 		
 		backBtn.addEvent('click', function(e){
 			e.stop();
-			Mobile.Application.loadLastScreen();
+			Mobile.Application.loadScreen('viewList', 'prev', {
+				id: Mobile.Application.getCurrentListId()
+			});
 		});
 		
 		var form = new Mobile.GUI.Form();
