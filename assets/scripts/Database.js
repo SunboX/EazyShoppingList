@@ -1,14 +1,23 @@
 /*
-	Script: Database.js
-	  
-	Copyright:
-	  Copyright (c) 2009 Dipl.-Ing. (FH) André Fiedler <kontakt@visualdrugs.net>
-	  
-	License:
-	  MIT-style license
-	  
-	Version
-	  0.9
+---
+
+script: Database.js
+
+description: Offers a Mootools way to interface with html5 databases (also known a "persistent storage"). Tries to use google gears if no html5 database is found.
+
+copyright: Copyright (c) 2009 Dipl.-Ing. (FH) André Fiedler <kontakt@visualdrugs.net>
+
+license: MIT-style license.
+
+version. 0.9
+
+requires:
+- /Options
+- /URI
+
+provides: [Database]
+
+...
 */
 
 window.addEvent('domready', function(){
@@ -59,8 +68,8 @@ var Database = new Class({
 	options: {
 		installGoogleGears: true
 	},
-    
-    initialize: function(name, options){
+	
+	initialize: function(name, options){
 		
 		if (!Browser.loaded)
 			alert('Database: Please wait until the DOM is ready!');
