@@ -10,6 +10,7 @@ var header = new Mobile.GUI.Header({
 	title: MooTools.lang.get('ESL', 'yourLists')
 });
 
+var settingsBtn = header.addButton(MooTools.lang.get('ESL', 'settings'), { type: 'left' });
 var newBtn = header.addButton(MooTools.lang.get('ESL', 'new'));
 
 scr.addControl(header);

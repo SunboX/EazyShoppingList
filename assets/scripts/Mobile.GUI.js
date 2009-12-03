@@ -10,14 +10,31 @@ Mobile.GUI = Mobile.GUI || {};
 
 Mobile.GUI.Control = new Class({
 	
-	Implements: [Options],
+	Implements: [Options, Events],
 	
 	options: {},
 	
 	element: {},
 	
+	initialize: function(){
+		this.resize();
+	},
+	
 	toElement: function(){
 		return this.element;
+	},
+	
+	resize: function(){
+		
+		// Delay for less cpu usage
+		var self = this;
+		$clear(this.resizeTimer);
+		/*
+		this.resizeTimer = (function(){
+			self.resize();
+		}).delay(500);
+		*/
+		this.fireEvent('onResize');
 	},
 	
 	hide: function(){
@@ -50,6 +67,9 @@ Mobile.GUI.Screen = new Class({
 	
 	addControl: function(control){
 		control.toElement().inject(this.element);
+		control.addEvent('resize', function(){
+			// TODO: resize
+		}.bind(this));
 	}
 });
 
@@ -128,6 +148,7 @@ Mobile.GUI.List = new Class({
 		}
 		
 		this.length++;
+		this.resize();
 		
 		return item;
 	}
@@ -238,10 +259,15 @@ Mobile.GUI.Form = new Class({
 			}
 		});
 		
+		var self = this;
+		
 		var resize = function(){
 			var s = this.getSize();
 			var ss = this.getScrollSize();
-			if(s.y < ss.y) this.setStyle('height', ss.y);
+			if (s.y < ss.y) {
+				this.setStyle('height', ss.y);
+				self.resize();
+			}
 		}
 		
 		if(options.resize){

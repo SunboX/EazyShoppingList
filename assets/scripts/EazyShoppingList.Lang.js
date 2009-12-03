@@ -14,8 +14,28 @@ MooTools.lang.set('en-US', 'ESL', {
 	'back': 				'back',
 	'done': 				'done',
 	'listName':				'Name',
-	'listContentMsg': 		'Add your list items here. Sepparate items through line breaks.',
+	'listContentMsg': 		'Add your list items here.' + "\n" + 'Sepparate items through line breaks.',
 	'edit':					'edit',
+	'settings':				'settings',
 	'Delete this List':		'Delete this List'
 
 });
+
+MooTools.lang.set('de-DE', 'ESL', {
+ 
+ 	'signUp': 				'Registrieren',
+    'yourLists': 			'Deine Listen',
+	'newList': 				'Neue Liste',
+	'editList': 			'Liste Bearbeiten',
+	'new': 					'Neu',
+	'back': 				'Zurück',
+	'done': 				'Fertig',
+	'listName':				'Name',
+	'listContentMsg': 		'Listeneinträge hier hinzufügen.' + "\n" + 'Einträge durch Zeilenumbruch trennen.',
+	'edit':					'Bearbeiten',
+	'settings':				'Einstellungen',
+	'Delete this List':		'Diese Liste löschen'
+
+});
+
+MooTools.lang.setLanguage(navigator.language ? navigator.language : navigator.userLanguage);

@@ -29,13 +29,10 @@ Mobile.Application = new Class({
 	
 	toElement: function(){
 		if (!$chk(this.container)) {
-			var s = window.getSize();
 			this.container = new Element('div', {
-				styles: {
-					width: s.x,
-					overflow: 'hidden'
-				}
+				'class': 'window'
 			}).inject(document.body);
+			this.container.set('tween', {duration: 'short'});
 		}
 			
 		return this.container;
@@ -70,7 +67,9 @@ Mobile.Application = new Class({
 		var d = this.currentScreen.direction;
 		var oldControl = this.currentScreen.control;
 		this.currentScreen.control = scrControl;
+		this.currentScreen.control.addEvent('resize', this.resize);
 		this.currentScreen.control.toElement().inject(this.toElement());
+		this.resize();
 		if ($chk(oldControl.toElement)) {
 			if (oldControl.getName() == scrControl.getName()) {
 				this.fireEvent('onScreenChanged', this.currentScreen);
@@ -100,6 +99,12 @@ Mobile.Application = new Class({
 		}
 	},
 	
+	resize: function(){
+		var ns = this.currentScreen.control.toElement().getSize();
+		this.toElement().tween('height', ns.y + 5);
+		this.fireEvent('onResize');
+	},
+		
 	initHistory: function() {
 		this.fireEvent('onHistoryInit');
 		

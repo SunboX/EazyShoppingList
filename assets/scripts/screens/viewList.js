@@ -21,7 +21,7 @@ db.execute('SELECT name FROM shopping_list WHERE id = ?', [Mobile.Application.ge
 		var items = [];
 
 		while(row = rs.next()){
-			items.push([row.get('id', 0), row.get('item', ''), row.get('checked') == 1]);
+			items.push([row.get('id', 0), row.get('item', ''), row.get('checked')]);
 		}
 		
 		var header = new Mobile.GUI.Header({
@@ -63,7 +63,7 @@ db.execute('SELECT name FROM shopping_list WHERE id = ?', [Mobile.Application.ge
 			});
 		});
 		
-		var deleteBtn = new Mobile.GUI.Button(MooTools.lang.get('ESL', 'Delete this List'));
+		var deleteBtn = new Mobile.GUI.Button(MooTools.lang.get('ESL', 'Delete this List'), {type: 'red'});
 		
 		deleteBtn.addEvent('click', function(e){
 			db.execute('DELETE FROM shopping_list_item WHERE list_id = ?', [Mobile.Application.getCurrentListId()], function(rs){
