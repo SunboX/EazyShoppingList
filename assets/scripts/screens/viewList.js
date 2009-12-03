@@ -53,12 +53,12 @@ db.execute('SELECT name FROM shopping_list WHERE id = ?', [Mobile.Application.ge
 		
 		backBtn.addEvent('click', function(e){
 			e.stop();
-			Mobile.Application.loadScreen('main', 'prev');
+			Mobile.Application.loadScreen('main', 'ltr');
 		});
 		
 		editBtn.addEvent('click', function(e){
 			e.stop();
-			Mobile.Application.loadScreen('editList', 'next', {
+			Mobile.Application.loadScreen('editList', 'rtl', {
 				id: Mobile.Application.getCurrentListId()
 			});
 		});
@@ -68,7 +68,7 @@ db.execute('SELECT name FROM shopping_list WHERE id = ?', [Mobile.Application.ge
 		deleteBtn.addEvent('click', function(e){
 			db.execute('DELETE FROM shopping_list_item WHERE list_id = ?', [Mobile.Application.getCurrentListId()], function(rs){
 				db.execute('DELETE FROM shopping_list WHERE id = ?', [Mobile.Application.getCurrentListId()], function(rs){
-					Mobile.Application.loadScreen('main', 'prev');
+					Mobile.Application.loadScreen('main', 'ltr');
 				});
 			});
 		});

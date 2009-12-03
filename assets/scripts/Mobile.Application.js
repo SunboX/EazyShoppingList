@@ -42,10 +42,13 @@ Mobile.Application = new Class({
 	},
 	
 	loadScreen: function(name, direction, parameters){
+		direction = (direction && direction != '') ? direction : (
+			this.currentScreen.direction == 'ltr' ? 'rtl' : 'ltr'
+		);
 		if(this.currentScreen.name == name) return;
 		this.currentScreen.name = name;
 		this.currentScreen.parameters = parameters || {};
-		this.currentScreen.direction = direction || 'prev';
+		this.currentScreen.direction = direction;
 		this.fireEvent('onScreenLoad', this.currentScreen);
 		this.screenRequest.send({
 			url: 'assets/scripts/screens/' + name + '.js'
@@ -83,10 +86,10 @@ Mobile.Application = new Class({
 			scrControl.toElement().setStyles({
 				position: 'absolute',
 				top: 0,
-				left: d == 'next' ? s.x : -s.x,
+				left: d == 'rtl' ? s.x : -s.x,
 				width: s.x,
 			});
-			if (d == 'next') {
+			if (d == 'rtl') {
 				oldControl.toElement().tween('left', [0, -s.x]);
 				scrControl.toElement().tween('left', [s.x, 0]);
 			}
@@ -109,7 +112,7 @@ Mobile.Application = new Class({
 			}.bind(this),
 			onMatch: function(values){
 				var ro = Mobile.Routing.parse(values[0]);
-				this.loadScreen(ro.name, (ro.direction == 'prev' ? 'next' : 'prev'), ro.parameters);
+				this.loadScreen(ro.name, (ro.direction == 'rtl' ? 'ltr' : 'rtl'), ro.parameters);
 			}.bind(this)
 		});
 		

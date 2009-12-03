@@ -21,7 +21,7 @@ Mobile.Routing = {
     },
     
     parse: function(str){
-		var ret = {name: '', direction: 'next', parameters: {}};
+		var ret = {name: '', direction: '', parameters: {}};
         match = str.match(this.regex);
 		if(match == null || match.lenth < 2)  return ret;
         ret.name = match[1];
