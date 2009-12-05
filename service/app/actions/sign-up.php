@@ -9,7 +9,7 @@
  * @version    0.1
  */
  
-class Registration_Action implements IContentAdictedAction
+class SignUp_Action implements IContentAdictedAction
 {
 	public function execute($c, $rd)
 	{

@@ -22,7 +22,7 @@ ContentAdicted::bootstrap('development');
 //ContentAdicted::bootstrap('production');
 
 ContentAdicted::register(array(
-	'/registration/' => 'registration'
+	'/sign-up/' => 'sign-up'
 ));
 
 ContentAdicted::dispatch();
