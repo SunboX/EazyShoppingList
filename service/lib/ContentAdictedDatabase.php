@@ -16,12 +16,10 @@ class ContentAdictedDatabase
 	protected function connect()
 	{
 		$this->conn = new PDO(
-			ContentAdicted::get('core.database.dns')
-			/*
+			ContentAdicted::get('core.database.dns'),
 			ContentAdicted::get('core.database.username'),
 			ContentAdicted::get('core.database.password'),
 			ContentAdicted::get('core.database.options')
-			*/
 		);
 		$attributes = ContentAdicted::get('core.database.attributes', array(
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
