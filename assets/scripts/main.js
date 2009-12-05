@@ -11,7 +11,7 @@ window.addEvents({
 		Mobile.Application.addEvents({
 		
 			'notRegistered': function(){
-				Mobile.Application.loadScreen('signup');
+				//Mobile.Application.loadScreen('signup');
 			},
 			
 			'startUp': function(){

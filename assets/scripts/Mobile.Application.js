@@ -10,7 +10,9 @@ Mobile.Application = new Class({
 
 	Implements: [Options, Events],
 	
-	options: {},
+	options: {
+		minHeight: 400
+	},
 	
 	currentScreen: {
 		name: '',
@@ -19,7 +21,8 @@ Mobile.Application = new Class({
 		control: {}
 	},
  	
-	initialize: function(){
+	initialize: function(options){
+		this.setOptions(options);
 		this.screenRequest = new Mobile.Request.Screen();
 		this.initHistory();
 		this.addEvent('screenLoaded', this.changeScreen);
@@ -101,7 +104,7 @@ Mobile.Application = new Class({
 	
 	resize: function(){
 		var ns = this.currentScreen.control.toElement().getSize();
-		this.toElement().tween('height', ns.y + 5);
+		this.toElement().tween('height', (ns.y + 5) < this.options.minHeight ? this.options.minHeight : (ns.y + 5));
 		this.fireEvent('onResize');
 	},
 		

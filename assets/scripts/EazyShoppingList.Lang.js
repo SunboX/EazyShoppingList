@@ -6,7 +6,7 @@
 
 MooTools.lang.set('en-US', 'ESL', {
  
- 	'signUp': 				'Sign Up',
+ 	'sign up': 				'Sign Up',
     'yourLists': 			'Your Lists',
 	'newList': 				'New List',
 	'editList': 			'Edit List',
@@ -17,13 +17,19 @@ MooTools.lang.set('en-US', 'ESL', {
 	'listContentMsg': 		'Add your list items here.' + "\n" + 'Sepparate items through line breaks.',
 	'edit':					'edit',
 	'settings':				'settings',
-	'Delete this List':		'Delete this List'
+	'Delete this List':		'Delete this List',
+	'You have to signup first. Signup now?':	'You have to signup first. Signup now?',
+	'nickNameField':		'Nickname',
+	'emailField':			'E-Mail',
+	'passwordField':		'Password',
+	'confirmPasswordField':	'Confirm Password',
+	'do sign up':			'do sign up'
 
 });
 
 MooTools.lang.set('de-DE', 'ESL', {
  
- 	'signUp': 				'Registrieren',
+ 	'sign up': 				'Registrieren',
     'yourLists': 			'Deine Listen',
 	'newList': 				'Neue Liste',
 	'editList': 			'Liste Bearbeiten',
@@ -34,8 +40,21 @@ MooTools.lang.set('de-DE', 'ESL', {
 	'listContentMsg': 		'Listeneinträge hier hinzufügen.' + "\n" + 'Einträge durch Zeilenumbruch trennen.',
 	'edit':					'Bearbeiten',
 	'settings':				'Einstellungen',
-	'Delete this List':		'Diese Liste löschen'
+	'Delete this List':		'Diese Liste löschen',
+	'You have to signup first. Signup now?':	'Sie müssen sich vorher anmelden. Jetzt registrieren?',
+	'nickNameField':		'Nickname',
+	'emailField':			'E-Mail',
+	'passwordField':		'Passwort',
+	'confirmPasswordField':	'Passwort wiederholen',
+	'do sign up':			'Registrierung senden'
 
 });
 
-MooTools.lang.setLanguage(navigator.language ? navigator.language : navigator.userLanguage);
+Browser.Language = (function(){
+	var lang = navigator.language ? navigator.language : navigator.userLanguage;
+	if(!lang.match(/\w+-\w+/))
+		lang = lang + '-' + lang.toUpperCase();
+	return lang;
+})();
+
+MooTools.lang.setLanguage(Browser.Language);

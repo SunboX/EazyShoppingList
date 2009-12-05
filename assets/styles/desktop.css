@@ -19,7 +19,7 @@
 		padding: 0;
 		-webkit-user-select: none;
 		-webkit-text-size-adjust: none;
-		background: #000;
+		background: #000 url(../images/web3.0.png) top left no-repeat;
 		}
 		
 		div.window {
@@ -611,6 +611,8 @@
 				margin-left: 0px;
 				width: 100%;
 				-webkit-appearance: textarea;
+				resize: none !important; /* disable resizable textareas in Webkit */
+				outline: 0 !important; /* disable focus ring in Safari */
 				}
 						
 				ul li textarea {

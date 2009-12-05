@@ -214,6 +214,60 @@ Mobile.GUI.Form = new Class({
 		return field;
 	},
 	
+	addPasswordfield: function(name, label, options){
+		options = options || {};
+		
+		if (!$chk(name)) {
+			alert('Mobile.GUI.Form.addPasswordfield: No name found!');
+			return null;
+		}	
+		
+		if (!$chk(label)) {
+			alert('Mobile.GUI.Form.addPasswordfield: No label found!');
+			return null;
+		}
+		
+		var value = options.value || label;
+		
+		var item = new Element('li').inject(this.element);
+		
+		var field = new Element('input', {
+			type: value != label ? 'password' : 'text',
+			name: name,
+			value: value,
+			defaultValue: label,
+			id: options.id || 'fe-' + $time()
+		}).inject(item);
+		
+		field.isEmpty = function(){
+			return this.get('value') == this.get('defaultValue');
+		}
+			
+		field.setError = function(hasError){
+			if(hasError == null) hasError = true;
+			if(hasError) this.getParent('li').addClass('error');
+			else this.getParent('li').removeClass('error');
+		}
+		
+		field.addEvents({
+			'focus': function(e){
+				this.setError(false);
+				if (this.get('value') == this.get('defaultValue')) {
+					this.set('value', '');
+					this.set('type', 'password');
+				}
+			},
+			'blur': function(e){
+				if (this.get('value') == '') {
+					this.set('value', this.get('defaultValue'));
+					this.set('type', 'text');
+				}
+			}
+		});
+		
+		return field;
+	},
+	
 	addTextarea: function(name, label, options){
 		options = $merge({resize: true}, options);
 		

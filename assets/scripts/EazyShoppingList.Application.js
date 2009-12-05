@@ -6,10 +6,12 @@
  
 Mobile.Application.extend({
 	
+	version: '0.1',
+	
 	options: $merge(Mobile.Application.options, {}),
 	
 	config: {
-		is_registered: true
+		is_registered: false
 	},
 	
 	run: function(){
@@ -20,11 +22,7 @@ Mobile.Application.extend({
 		this.db.execute('CREATE TABLE IF NOT EXISTS shopping_list (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL)');
 		this.db.execute('CREATE TABLE IF NOT EXISTS shopping_list_item (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, list_id INTEGER NOT NULL, checked INTEGER NOT NULL DEFAULT 0, position INTEGER NOT NULL, item TEXT NOT NULL)');
 		
-		if(this.config.is_registered){
-			this.fireEvent('startUp');
-		} else {
-			this.fireEvent('notRegistered');
-		}
+		this.fireEvent('startUp');
 	},
 	
 	isRegistered: function(){

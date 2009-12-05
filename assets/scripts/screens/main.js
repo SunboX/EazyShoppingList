@@ -13,12 +13,22 @@ var header = new Mobile.GUI.Header({
 var settingsBtn = header.addButton(MooTools.lang.get('ESL', 'settings'), { type: 'left' });
 var newBtn = header.addButton(MooTools.lang.get('ESL', 'new'));
 
+settingsBtn.addEvent('click', function(e){
+	e.stop();
+	if(Mobile.Application.isRegistered()){
+		
+	} else {
+		if(confirm(MooTools.lang.get('ESL', 'You have to signup first. Signup now?')))
+			Mobile.Application.loadScreen('signUp', 'ltr');
+	}
+});
+
 scr.addControl(header);
 
 var shopListsList = new Mobile.GUI.List();
 
 var db = Mobile.Application.getDB();
-		
+
 db.execute('SELECT id, name FROM shopping_list', null, function(rs){
 	while(row = rs.next()){
 		var item = shopListsList.addItem(row.get('name'), {

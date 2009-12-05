@@ -44,4 +44,5 @@ assets/scripts/screens/newList.js
 assets/scripts/screens/signup.js
 assets/scripts/screens/viewList.js
     
+assets/styles/desktop.css
 assets/styles/iphone.css
