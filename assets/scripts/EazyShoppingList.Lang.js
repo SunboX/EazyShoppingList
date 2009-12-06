@@ -23,7 +23,12 @@ MooTools.lang.set('en-US', 'ESL', {
 	'emailField':			'E-Mail',
 	'passwordField':		'Password',
 	'confirmPasswordField':	'Confirm Password',
-	'do sign up':			'do sign up'
+	'do sign up':			'do sign up',
+	'Plz fill all marked fields.': 'Plz fill all marked fields.',
+	'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.': 'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.',
+	'Check your email address!': 'Check your email address!',
+	'Your password doesn´t match.': 'Your password doesn´t match.'
+	
 
 });
 
@@ -46,7 +51,11 @@ MooTools.lang.set('de-DE', 'ESL', {
 	'emailField':			'E-Mail',
 	'passwordField':		'Passwort',
 	'confirmPasswordField':	'Passwort wiederholen',
-	'do sign up':			'Registrierung senden'
+	'do sign up':			'Registrierung senden',
+	'Plz fill all marked fields.': 'Bitte füllen Sie alle markierten Felder aus.',
+	'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.': 'Ihr Nickname darf nur die Zeichen a-Z, 0-9, Bindestriche sowie Unterstriche enthalten.',
+	'Check your email address!': 'Bitte prüfen Sie die Schreibweise Ihrer E-Mail-Adresse!',
+	'Your password doesn´t match.': 'Die eingegebenen Passwörter stimmen nicht überein.'
 
 });
 

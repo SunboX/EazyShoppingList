@@ -15,7 +15,9 @@ require_once('lib/Util.php');
 ContentAdicted::set(array(
 	'core.database.dns' => 'sqlite:./app/data/esl.s3db',
 	'core.database.username' => '',
-	'core.database.password' => ''
+	'core.database.password' => '',
+	'core.encryption.algorithm' => 'sha1',
+	'core.encryption.salt' => '1234'
 ));
 
 ContentAdicted::bootstrap('development');

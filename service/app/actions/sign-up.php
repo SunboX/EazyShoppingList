@@ -17,13 +17,15 @@ class SignUp_Action implements IContentAdictedAction
 		if(
 			isset($rd['nickname']) &&
 			isset($rd['email']) &&
-			isset($rd['password']) &&
-			isset($rd['password-confirm'])
+			isset($rd['password'])
 		)
 		{
 			// validate
+			$rd['nickname'] = trim($rd['nickname']);
+			$rd['email'] = trim($rd['email']);
+			$rd['password'] = trim($rd['password']);
 			
-			if(!preg_match('/^[A-Z0-9-_]{3,50}$/', $rd['nickname']))
+			if(!preg_match('/^[a-zA-Z0-9-_]{3,50}$/', $rd['nickname']))
 			{
 				$state = 1; // nickname isn't valid
 			}
@@ -33,7 +35,7 @@ class SignUp_Action implements IContentAdictedAction
 			{
 				$state = 2; // nickname exists
 			}
-			else if(!preg_match('^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$', $rd['email']))
+			else if(!preg_match('/^[a-zA-Z0-9\._%+-]+@[a-zA-Z0-9\.-]+\.[a-z]{2,6}$/', $rd['email']))
 			{
 				$state = 3; // email isn't valid
 			}
@@ -49,22 +51,15 @@ class SignUp_Action implements IContentAdictedAction
 			}
 			else
 			{
-				if($rd['password'] != $rd['password-confirm'])
-				{
-					$state = 6; // password does not match
-				}
-				else
-				{
-					// create new user
-					$c->getConnection()->query('INSERT INTO user SET' .
-				
-						' nickname = ' . $c->getConnection()->quote($rd['nickname']) . ',' .
-						' email = ' . $c->getConnection()->quote($rd['email']) . ',' .
-						' password = ' . $c->getConnection()->quote($rd['password']) . ',' .
-						' created = NOW()'
-					);
-					$state = 7;
-				}
+				// create new user
+				$c->getConnection()->query('INSERT INTO user (nickname, email, password, created) VALUES (' .
+					$c->getConnection()->quote($rd['nickname']) . ',' .
+					$c->getConnection()->quote($rd['email']) . ',' .
+					$c->getConnection()->quote(Util::encrypt($rd['password'])) . ',' .
+					'DATETIME(\'NOW\')' .
+				')'
+				);
+				$state = 6;
 			}
 		}
 		$c->setAttribute('json', '{"state":' . $state . '}');

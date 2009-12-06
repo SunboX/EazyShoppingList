@@ -29,10 +29,64 @@ var passwordField = form.addPasswordfield('password', MooTools.lang.get('ESL', '
 var confirmPasswordField = form.addPasswordfield('password-confirm', MooTools.lang.get('ESL', 'confirmPasswordField'));
 
 scr.addControl(form);
+	
+var waiting = false;
 
 doneBtn.addEvent('click', function(e){
 	e.stop();
-	alert('done');
+	
+	// validate
+	var nickname = nickNameField.get('value', '').trim();
+	var email = emailField.get('value', '').trim();
+	var password = passwordField.get('value', '').trim();
+	var passwordConfirm = confirmPasswordField.get('value', '').trim();
+	
+	if(nickname == ''){
+		nickNameField.setError();
+		alert(MooTools.lang.get('ESL', 'Plz fill all marked fields.'));
+		return;
+	}
+	if(!nickname.match(/^[a-zA-Z0-9-_]{3,50}$/)){
+		nickNameField.setError();
+		alert(MooTools.lang.get('ESL', 'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.'));
+		return;
+	}
+	if(email == ''){
+		emailField.setError();
+		alert(MooTools.lang.get('ESL', 'Plz fill all marked fields.'));
+		return;
+	}
+	if(!email.match(/^[a-zA-Z0-9\._%+-]+@[a-zA-Z0-9\.-]+\.[a-z]{2,6}$/)){
+		emailField.setError();
+		alert(MooTools.lang.get('ESL', 'Check your email address!'));
+		return;
+	}
+	if(password == '' || passwordConfirm == '' || password != passwordConfirm){
+		passwordField.setError();
+		confirmPasswordField.setError();
+		alert(MooTools.lang.get('ESL', 'Your password doesn´t match.'));
+		return;
+	}
+	
+	if(!waiting)
+		new Request.JSON({url: 'service/sign-up/', onSuccess: function(response){
+			switch(response.state.toInt())
+			{
+				case 6:
+					alert('success');
+					break;
+				
+				default:
+					waiting = false;
+					alert('denied');
+			}
+		}}).post({
+			'nickname': nickname,
+			'email': email,
+			'password': password
+		});
+	
+	waiting = true;
 });
 
 Mobile.Application.showScreen(scr);

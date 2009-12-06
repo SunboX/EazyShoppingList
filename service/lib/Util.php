@@ -6,11 +6,18 @@
  * @link 	   http://www.visualdrugs.net/
  * @copyright  2007 - 2009 André Fiedler.
  * @license    MIT License
- * @version    1.1
+ * @version    1.2
  */
 
 class Util
-{	
+{
+	static function encrypt($string)
+	{
+		$string .= ContentAdicted::set('core.encryption.salt');
+		$mode = in_array(ContentAdicted::set('core.encryption.algorithm'), hash_algos());
+		return $mode ? hash(ContentAdicted::set('core.encryption.algorithm'), $string) : sha1($string);
+	}
+	
 	static function wordcut($sText, $iMaxLength, $sMessage)
 	{
 		if (strlen($sText) > $iMaxLength)
