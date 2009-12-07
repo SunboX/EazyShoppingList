@@ -72,13 +72,33 @@ doneBtn.addEvent('click', function(e){
 		new Request.JSON({url: 'service/sign-up/', onSuccess: function(response){
 			switch(response.state.toInt())
 			{
+				case 0:
+					break;
+				
+				case 1:
+					break;
+				
+				case 2:
+					break;
+				
+				case 3:
+					break;
+				
+				case 4:
+					break;
+				
+				case 5:
+					break;
+					
 				case 6:
 					alert('success');
+					Mobile.Application.setRegistered();
 					break;
 				
 				default:
 					waiting = false;
-					alert('denied');
+					alert(MooTools.lang.get('ESL', 'fail'));
+					'index.html'.toURI().go();
 			}
 		}}).post({
 			'nickname': nickname,

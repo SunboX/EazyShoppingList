@@ -27,7 +27,8 @@ MooTools.lang.set('en-US', 'ESL', {
 	'Plz fill all marked fields.': 'Plz fill all marked fields.',
 	'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.': 'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.',
 	'Check your email address!': 'Check your email address!',
-	'Your password doesn´t match.': 'Your password doesn´t match.'
+	'Your password doesn´t match.': 'Your password doesn´t match.',
+	'fail': 'We´re sorry. ESL had a problem and crashed.'
 	
 
 });
@@ -55,7 +56,8 @@ MooTools.lang.set('de-DE', 'ESL', {
 	'Plz fill all marked fields.': 'Bitte füllen Sie alle markierten Felder aus.',
 	'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.': 'Ihr Nickname darf nur die Zeichen a-Z, 0-9, Bindestriche sowie Unterstriche enthalten.',
 	'Check your email address!': 'Bitte prüfen Sie die Schreibweise Ihrer E-Mail-Adresse!',
-	'Your password doesn´t match.': 'Die eingegebenen Passwörter stimmen nicht überein.'
+	'Your password doesn´t match.': 'Die eingegebenen Passwörter stimmen nicht überein.',
+	'fail': 'Entschuldigung ESL ist abgestürzt.'
 
 });
 

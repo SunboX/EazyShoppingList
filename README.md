@@ -10,3 +10,8 @@ License
 See http://creativecommons.org/licenses/by-nc-nd/3.0/
 
 Maybe the underliing mobile application framework will be released by an open source license at a later state.
+
+Demo
+---
+
+You can see a live demo at: [http://www.eazyshoppinglist.com/](http://www.eazyshoppinglist.com/)

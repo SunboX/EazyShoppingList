@@ -18,17 +18,18 @@ Mobile.Application.extend({
 		
 		this.db = new Database('EasyShopList');
 		
-		/* 
-		this.db.execute('DROP TABLE IF EXISTS settings');
-		this.db.execute('DROP TRIGGER IF EXISTS settings_created');
-		this.db.execute('DROP TRIGGER IF EXISTS settings_modified');
-		this.db.execute('DROP TABLE IF EXISTS shopping_list');
-		this.db.execute('DROP TRIGGER IF EXISTS shopping_list_created');
-		this.db.execute('DROP TRIGGER IF EXISTS shopping_list_modified');
-		this.db.execute('DROP TABLE IF EXISTS shopping_list_item');
-		this.db.execute('DROP TRIGGER IF EXISTS shopping_list_item_created');
-		this.db.execute('DROP TRIGGER IF EXISTS shopping_list_item_modified');
-		*/
+		if (document.location.href.toURI().get('fragment').match(/reload/)) {
+			this.db.execute('DROP TABLE IF EXISTS settings');
+			this.db.execute('DROP TRIGGER IF EXISTS settings_created');
+			this.db.execute('DROP TRIGGER IF EXISTS settings_modified');
+			this.db.execute('DROP TABLE IF EXISTS shopping_list');
+			this.db.execute('DROP TRIGGER IF EXISTS shopping_list_created');
+			this.db.execute('DROP TRIGGER IF EXISTS shopping_list_modified');
+			this.db.execute('DROP TABLE IF EXISTS shopping_list_item');
+			this.db.execute('DROP TRIGGER IF EXISTS shopping_list_item_created');
+			this.db.execute('DROP TRIGGER IF EXISTS shopping_list_item_modified');
+		}
+		
 		
 		/* create db table if not exist */
 		this.db.execute('CREATE TABLE IF NOT EXISTS settings (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nickname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, created TIMESTAMP, modified TIMESTAMP)');
@@ -47,7 +48,16 @@ Mobile.Application.extend({
 		this.db.execute('CREATE TRIGGER IF NOT EXISTS shopping_list_item_modified AFTER UPDATE ON shopping_list_item FOR EACH ROW BEGIN UPDATE shopping_list_item SET modified = DATETIME(\'NOW\') WHERE id = NEW.id; END'); 
 		
 		
+		this.db.execute('SELECT COUNT(*) AS c FROM settings', null, function(rs){
+			row = rs.next();
+			if(row.c && row.c > 0)
+				this.setRegistered();
+		});
 		this.fireEvent('startUp');
+	},
+	
+	setRegistered: function(registered){
+		this.config.is_registered = registered || true;
 	},
 	
 	isRegistered: function(){

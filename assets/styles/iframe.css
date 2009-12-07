@@ -13,28 +13,27 @@
 	
 	*/
 	
+	* { cursor: pointer; }
+	
 	body {
+		background: rgb(197,204,211) url(../images/stripes.png);
 		font-family: Helvetica;
 		margin: 0;
 		padding: 0;
 		-webkit-user-select: none;
 		-webkit-text-size-adjust: none;
-		background: #000 url(../images/web3.0.png) top left no-repeat;
 		}
 		
 		div.window {
 			position: relative;
-			width: 480px;
-			height: 500px;
-			background: rgb(197,204,211) url(../images/stripes.png);
+			width: 320px;
+			height: 480px;
 			overflow: hidden;
-			border: 1px #666 solid;
-			margin: 20px auto 0 auto;
 		}
 		
 		div.screen {
 			position: relative;
-			width: 480px;
+			width: 320px;
 			padding-bottom: 5px;
 		}
 
@@ -603,7 +602,7 @@
 		
 			ul li input[type="text"], ul li input[type="password"], ul li textarea, ul li select {
 				color: #777;
-				background: #fff url(../.png); /* this is a hack due the default input shadow that iphones uses on textfields */
+				background: #fff;
 				border: 0;				
 				font: normal 17px Helvetica;
 				padding: 0;
