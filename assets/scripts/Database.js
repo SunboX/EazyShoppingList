@@ -3,13 +3,13 @@
 
 script: Database.js
 
-description: Offers a Mootools way to interface with html5 databases (also known a "persistent storage"). Tries to use google gears if no html5 database is found.
+description: Offers a Mootools way to interface with html5 databases (also known as "persistent storage"). Tries to use google gears if no html5 database is found.
 
 copyright: Copyright (c) 2009 Dipl.-Ing. (FH) André Fiedler <kontakt@visualdrugs.net>
 
 license: MIT-style license.
 
-version. 0.9
+version. 0.9.1
 
 requires:
 - /Options
@@ -66,6 +66,7 @@ var Database = new Class({
 	Implements: [Options],
 	
 	options: {
+		version: '1.0',
 		installGoogleGears: true
 	},
 	
@@ -84,11 +85,20 @@ var Database = new Class({
 		
 		this.html5 = Browser.Database.name == 'html5';
 		
-		if(this.html5)
-			this.db = openDatabase(name, '1.0', '', 65536);
-		else{
+		if (this.html5) {
+			this.db = openDatabase(name, this.options.version, '', 65536);
+			this.dbVersion = this.db.version;
+		} else {
 			this.db = google.gears.factory.create('beta.database');
 			this.db.open(name);
+			this.db.execute('CREATE TABLE IF NOT EXISTS DATABASE_METADATA (version TEXT NOT NULL)');
+			var rs = this.db.execute('SELECT version FROM DATABASE_METADATA');
+			if (rs.isValidRow()) {
+				this.dbVersion = rs.fieldByName('version');
+			} else {
+				this.dbVersion = this.options.version;
+				this.db.execute('INSERT INTO DATABASE_METADATA (version) VALUES (?)', [this.options.version]);
+			}
 		}
 		
 		this.lastInsertRowId = 0;
@@ -121,6 +131,19 @@ var Database = new Class({
 	
 	close: function(){
 		this.db.close();
+	},
+	
+	getVersion: function(){
+		return this.dbVersion;
+	},
+	
+	changeVersion: function(from, to){
+		if(this.html5)
+			this.db.changeVersion(from, to);
+		else
+			this.db.execute('UPDATE DATABASE_METADATA SET version = ? WHERE version = ?', [to, from]);
+			
+		this.dbVersion = to;
 	}
 });
 
@@ -162,16 +185,9 @@ Database.ResultSet.Row = new Class({
 		
 		if (this.html5) 
 			col = this.row[index];
-		else {
-			var i = 0;
-			while (i < this.row.fieldCount()) {
-				if (this.row.fieldName(i) == index) {
-					col = this.row.field(i);
-					break;
-				}
-				i++;
-			}
-		}
+		else
+			col = this.row.fieldByName(index);
+		
 		return col || defaultValue;
 	}
 });
