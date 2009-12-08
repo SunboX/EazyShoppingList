@@ -4,26 +4,11 @@
  * @license http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
 
-var scroller;
-
 window.addEvents({
 
 	'domready': function(){
 		
-		scroller = new Fx.Scroll(document.body, {
-			wheelStops: false
-		});
-		
-		var touch = new Touch(window);
-		
-		touch.addEvent('move', function(dx, dy){
-			scroller.start(0, document.body.getScroll().y + -dy * 100);
-		});
-		
-		touch.addEvent('end', function(){
-			scroller.cancel();
-		});
-
+		new Touch.WindowScroller();
 		
 		Mobile.Application.addEvents({
 		
@@ -46,7 +31,7 @@ window.addEvents({
 	},
 	
 	'mousewheel': function(e) {
-		
-		scroller.start(0, document.body.getScroll().y + -e.wheel * 100);
+		var y = document.body.getScroll().y + -e.wheel * 100;
+		window.scrollTo(0, y < 1 ? 1 : y);
 	}
 });

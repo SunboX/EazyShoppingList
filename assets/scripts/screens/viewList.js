@@ -21,7 +21,7 @@ db.execute('SELECT name FROM shopping_list WHERE id = ?', [Mobile.Application.ge
 		var items = [];
 
 		while(row = rs.next()){
-			items.push([row.get('id', 0), row.get('item', ''), row.get('checked')]);
+			items.push([row.get('id', 0), row.get('item', ''), !!row.get('checked')]);
 		}
 		
 		var header = new Mobile.GUI.Header({
@@ -36,11 +36,12 @@ db.execute('SELECT name FROM shopping_list WHERE id = ?', [Mobile.Application.ge
 		var shopListsList = new Mobile.GUI.List();
 		
 		items.each(function(item){
+			var checked = item[2];
 			var item = shopListsList.addItem(item[1], {
 				id: 'list-' + item[0],
-				icon: item[2] ? 'assets/images/checkbox-checked.png' : 'assets/images/checkbox.png'
+				icon: checked ? 'assets/images/checkbox-checked.png' : 'assets/images/checkbox.png'
 			});
-			item.store('checked', item[2]);
+			item.store('checked', checked);
 			item.addEvent('click', function(e){
 				e.stop();
 				this.store('checked', !this.retrieve('checked', false));

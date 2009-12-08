@@ -13,12 +13,17 @@ provides: Touch
 ...
 */
 
-var Touch = new Class({
+Touch = new Class({
 	
-	Implements: Events,
+	Implements: [Events, Options],
 	
-	initialize: function(element){
+	options: {
+		delay: 0
+	},
+	
+	initialize: function(element, options){
 		this.element = document.id(element);
+		this.setOptions(options);
 		
 		this.bound = {
 			start: this.start.bind(this),
@@ -54,21 +59,24 @@ var Touch = new Class({
 	// protected methods
 	
 	start: function(event){
-		this.preventDefault(event);
-		// this prevents the copy-paste dialog to show up when dragging. it only affects mobile safari.
-		document.body.style.WebkitUserSelect = 'none';
-		
-		this.hasDragged = false;
-		
-		this.context.addListener(this.moveEvent, this.bound.move);
-		this.context.addListener(this.endEvent, this.bound.end);
-		
-		var page = this.getPage(event);
+		this.touchTimer = (function(event){
+			this.preventDefault(event);
+			// this prevents the copy-paste dialog to show up when dragging. it only affects mobile safari.
+			document.body.style.WebkitUserSelect = 'none';
 			
-		this.startX = page.pageX;
-		this.startY = page.pageY;
+			this.hasDragged = false;
+			
+			this.context.addListener(this.moveEvent, this.bound.move);
+			
+			var page = this.getPage(event);
+			
+			this.startX = page.pageX;
+			this.startY = page.pageY;
+			
+			this.fireEvent('start');
+		}).delay(this.options.delay, this, event);
 		
-		this.fireEvent('start');
+		this.context.addListener(this.endEvent, this.bound.end);
 	},
 	
 	move: function(event){
@@ -85,6 +93,8 @@ var Touch = new Class({
 	},
 	
 	end: function(event){
+		$clear(this.touchTimer );
+		
 		this.preventDefault(event);
 		// we re-enable the copy-paste dialog on drag end
 		document.body.style.WebkitUserSelect = '';
