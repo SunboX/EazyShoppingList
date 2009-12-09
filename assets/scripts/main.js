@@ -12,8 +12,10 @@ window.addEvents({
 		
 		Mobile.Application.addEvents({
 		
-			'notRegistered': function(){
-				//Mobile.Application.loadScreen('signup');
+			'firstRun': function(){
+				if(confirm(MooTools.lang.get('ESL', 'firstRun'))){
+					Mobile.Application.loadScreen('login');
+				}
 			},
 			
 			'startUp': function(){

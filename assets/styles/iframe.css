@@ -25,15 +25,12 @@
 		}
 		
 		div.window {
-			position: relative;
-			width: 320px;
-			height: 480px;
-			overflow: hidden;
+		
 		}
 		
 		div.screen {
 			position: relative;
-			width: 320px;
+			width: 100%;
 			padding-bottom: 5px;
 		}
 
@@ -612,6 +609,7 @@
 				-webkit-appearance: textarea;
 				resize: none !important; /* disable resizable textareas in Webkit */
 				outline: 0 !important; /* disable focus ring in Safari */
+				overflow: hidden;
 				}
 						
 				ul li textarea {

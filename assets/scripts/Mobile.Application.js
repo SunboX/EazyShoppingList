@@ -11,7 +11,6 @@ Mobile.Application = new Class({
 	Implements: [Options, Events],
 	
 	options: {
-		minHeight: 400
 	},
 	
 	currentScreen: {
@@ -88,8 +87,8 @@ Mobile.Application = new Class({
 			scrControl.toElement().setStyles({
 				position: 'absolute',
 				top: 0,
-				left: d == 'rtl' ? s.x : -s.x,
-				width: s.x,
+				left: (d == 'rtl' ? s.x : -s.x),
+				width: s.x
 			});
 			if (d == 'rtl') {
 				oldControl.toElement().tween('left', [0, -s.x]);
@@ -103,8 +102,6 @@ Mobile.Application = new Class({
 	},
 	
 	resize: function(){
-		var ns = this.currentScreen.control.toElement().getSize();
-		this.toElement().tween('height', (ns.y + 5) < this.options.minHeight ? this.options.minHeight : (ns.y + 5));
 		this.fireEvent('onResize');
 	},
 		

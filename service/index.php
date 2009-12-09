@@ -17,13 +17,15 @@ ContentAdicted::set(array(
 	'core.database.username' => '',
 	'core.database.password' => '',
 	'core.encryption.algorithm' => 'sha1',
-	'core.encryption.salt' => '1234'
+	'core.encryption.salt' => '1234',
+	'core.document_root' => 'http://app.eazyshoppinglist.com/'
 ));
 
 ContentAdicted::bootstrap('development');
 //ContentAdicted::bootstrap('production');
 
 ContentAdicted::register(array(
+	'/scripts/' => 'compileScripts',
 	'/sign-up/' => 'sign-up'
 ));
 

@@ -28,8 +28,8 @@ MooTools.lang.set('en-US', 'ESL', {
 	'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.': 'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.',
 	'Check your email address!': 'Check your email address!',
 	'Your password doesn´t match.': 'Your password doesn´t match.',
-	'fail': 'We´re sorry. ESL had a problem and crashed.'
-	
+	'fail': 'We´re sorry. ESL had a problem and crashed.',
+	'firstRun':				'It seems you´re running ESL the first time. Do you want to log in?'
 
 });
 
@@ -57,7 +57,14 @@ MooTools.lang.set('de-DE', 'ESL', {
 	'Check your nickname! Allowed chars are a-Z, 0-9, scores and underscores.': 'Ihr Nickname darf nur die Zeichen a-Z, 0-9, Bindestriche sowie Unterstriche enthalten.',
 	'Check your email address!': 'Bitte prüfen Sie die Schreibweise Ihrer E-Mail-Adresse!',
 	'Your password doesn´t match.': 'Die eingegebenen Passwörter stimmen nicht überein.',
-	'fail': 'Entschuldigung ESL ist abgestürzt.'
+	'fail': 'Entschuldigung ESL ist abgestürzt.',
+	'firstRun':				'Es schein als hättest du ESL das erste mal gestartet. Möchtest du dich jetzt einloggen?'
+
+});
+
+MooTools.lang.set('de-DE', 'Database', {
+ 
+ 	'noValidDatabase': 'Es wurde keine gültige Datanbank gefunden. Möchsten Sie stattdessen Google Gears installieren?'
 
 });
 

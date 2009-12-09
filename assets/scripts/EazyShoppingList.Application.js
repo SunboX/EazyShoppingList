@@ -16,6 +16,19 @@ Mobile.Application.extend({
 	
 	run: function(){
 		
+		this.initDB();
+		
+		this.db.execute('SELECT COUNT(*) AS c FROM settings', null, function(rs){
+			row = rs.next();
+			if(row.c && row.c > 0)
+				this.setRegistered();
+			else
+				this.fireEvent('firstRun');
+		}.bind(this));
+		this.fireEvent('startUp');
+	},
+	
+	initDB: function(){
 		this.db = new Database('EasyShopList');
 		
 		if (document.location.href.toURI().get('fragment').match(/reload/)) {
@@ -32,28 +45,20 @@ Mobile.Application.extend({
 		
 		
 		/* create db table if not exist */
-		this.db.execute('CREATE TABLE IF NOT EXISTS settings (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nickname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, created TIMESTAMP, modified TIMESTAMP)');
+		this.db.execute('CREATE TABLE IF NOT EXISTS settings (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, global_id INTEGER, nickname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, created TIMESTAMP, modified TIMESTAMP)');
 		
 		this.db.execute('CREATE TRIGGER IF NOT EXISTS settings_created AFTER INSERT ON settings FOR EACH ROW BEGIN UPDATE settings SET created = DATETIME(\'NOW\'), modified = DATETIME(\'NOW\') WHERE id = NEW.id; END'); 
 		this.db.execute('CREATE TRIGGER IF NOT EXISTS settings_modified AFTER UPDATE ON settings FOR EACH ROW BEGIN UPDATE settings SET modified = DATETIME(\'NOW\') WHERE id = NEW.id; END'); 
 		
-		this.db.execute('CREATE TABLE IF NOT EXISTS shopping_list (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, created TIMESTAMP, modified TIMESTAMP)');
+		this.db.execute('CREATE TABLE IF NOT EXISTS shopping_list (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, global_id INTEGER, name TEXT NOT NULL, created TIMESTAMP, modified TIMESTAMP)');
 		
 		this.db.execute('CREATE TRIGGER IF NOT EXISTS shopping_list_created AFTER INSERT ON shopping_list FOR EACH ROW BEGIN UPDATE shopping_list SET created = DATETIME(\'NOW\'), modified = DATETIME(\'NOW\') WHERE id = NEW.id; END'); 
 		this.db.execute('CREATE TRIGGER IF NOT EXISTS shopping_list_modified AFTER UPDATE ON shopping_list FOR EACH ROW BEGIN UPDATE shopping_list SET modified = DATETIME(\'NOW\') WHERE id = NEW.id; END'); 
 		
-		this.db.execute('CREATE TABLE IF NOT EXISTS shopping_list_item (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, list_id INTEGER NOT NULL, checked INTEGER NOT NULL DEFAULT 0, position INTEGER NOT NULL, item TEXT NOT NULL, created TIMESTAMP, modified TIMESTAMP)');
+		this.db.execute('CREATE TABLE IF NOT EXISTS shopping_list_item (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, global_id INTEGER, list_id INTEGER NOT NULL, checked INTEGER NOT NULL DEFAULT 0, position INTEGER NOT NULL, item TEXT NOT NULL, created TIMESTAMP, modified TIMESTAMP)');
 		
 		this.db.execute('CREATE TRIGGER IF NOT EXISTS shopping_list_item_created AFTER INSERT ON shopping_list_item FOR EACH ROW BEGIN UPDATE shopping_list_item SET created = DATETIME(\'NOW\'), modified = DATETIME(\'NOW\') WHERE id = NEW.id; END'); 
 		this.db.execute('CREATE TRIGGER IF NOT EXISTS shopping_list_item_modified AFTER UPDATE ON shopping_list_item FOR EACH ROW BEGIN UPDATE shopping_list_item SET modified = DATETIME(\'NOW\') WHERE id = NEW.id; END'); 
-		
-		
-		this.db.execute('SELECT COUNT(*) AS c FROM settings', null, function(rs){
-			row = rs.next();
-			if(row.c && row.c > 0)
-				this.setRegistered();
-		});
-		this.fireEvent('startUp');
 	},
 	
 	setRegistered: function(registered){
