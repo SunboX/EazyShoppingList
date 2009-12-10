@@ -5,11 +5,15 @@ script: Database.js
 
 description: Offers a Mootools way to interface with html5 databases (also known as "persistent storage"). Tries to use google gears if no html5 database is found.
 
+authors: Dipl.-Ing. (FH) André Fiedler <kontakt@visualdrugs.net>
+
 copyright: Copyright (c) 2009 Dipl.-Ing. (FH) André Fiedler <kontakt@visualdrugs.net>
 
 license: MIT-style license.
 
-version. 0.9.2
+version: 0.9.3
+
+requires: core:1.2.4: '*'
 
 provides: Database
 
@@ -32,7 +36,7 @@ window.addEvent('domready', function(){
 					// IE
 					factory = new ActiveXObject('Gears.Factory');
 					// privateSetGlobalObject is only required and supported on IE Mobile on WinCE.
-					if (factory.getBuildInfo().indexOf('ie_mobile') != -1) factory.privateSetGlobalObject(this);
+					if (factory.getBuildInfo().match(/ie_mobile/)) factory.privateSetGlobalObject(this);
 				} else {
 					// Safari
 					if ($type(navigator.mimeTypes) != 'undefined' && navigator.mimeTypes['application/x-googlegears']) {
@@ -100,24 +104,33 @@ var Database = new Class({
 		this.lastInsertRowId = 0;
 	},
 	
-	execute: function(sql, values, callback, errorCallback){
+	execute: function(sql, options){
 		if(!this.db) return;
-		values = values || [];
+		options = $merge({
+			values: [],
+			onComplete: $empty,
+			onError: $empty
+		}, options);
 		if (this.html5) 
 			this.db.transaction(function(transaction){
-				transaction.executeSql(sql, values, function(transaction, rs){
+				transaction.executeSql(sql, options.values, function(transaction, rs){
 					try {
 						this.lastInsertRowId = rs.insertId;
 					} catch(e) {}
-					if (callback) 
-						callback(new Database.ResultSet(rs));
-				}.bind(this), errorCallback);
+					if (options.onComplete) 
+						options.onComplete(new Database.ResultSet(rs));
+				}.bind(this), options.onError);
 			}.bind(this));
 		else {
-			var rs = this.db.execute(sql, values);
-			this.lastInsertRowId = this.db.lastInsertRowId;
-			if (callback)
-				callback(new Database.ResultSet(rs));
+			try {
+				var rs = this.db.execute(sql, options.values);
+				this.lastInsertRowId = this.db.lastInsertRowId;
+				if (options.onComplete) 
+					options.onComplete(new Database.ResultSet(rs));
+			} catch(error){
+				if (options.onError)
+					options.onError(error);
+			}
 		}
 	},
 	

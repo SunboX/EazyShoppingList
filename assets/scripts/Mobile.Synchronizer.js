@@ -42,11 +42,13 @@ Mobile.Synchronizer = new Class({
 		this.db.execute('CREATE TABLE IF NOT EXISTS Synchronizer (last_sync_time INTEGER NOT NULL)');
 		
 		this.lastSyncTime = 0;
-		this.db.execute('SELECT last_sync_time FROM Synchronizer', null, function(rs){
-			while(row = rs.next())
-				this.lastSyncTime = row.get('last_sync_time').toInt();
-			this.run();
-		}.bind(this));
+		this.db.execute('SELECT last_sync_time FROM Synchronizer', {
+			onComplete: function(rs){
+				while (row = rs.next()) 
+					this.lastSyncTime = row.get('last_sync_time').toInt();
+				this.run();
+			}.bind(this)
+		});
 	},
 	
 	run: function(){
@@ -59,17 +61,19 @@ Mobile.Synchronizer = new Class({
 	
 	push: function(){
 		this.tablesAndFields.each(function(columns, table){
-			this.db.execute('SELECT ' + columns.join(', ') + ' FROM ' + table + ' WHERE modified > ' + this.lastSyncTime, null, function(rs){
-				var ds = [];
-				while (row = rs.next()) {
-					var d = {};
-					columns.each(function(column){
-						d[column] = row.get(column);
-					}.bind(this));
-					ds.push(d);
-				}
-				pushData.tables[table] = ds;
-			}.bind(this));
+			this.db.execute('SELECT ' + columns.join(', ') + ' FROM ' + table + ' WHERE modified > ' + this.lastSyncTime, {
+				onComplete: function(rs){
+					var ds = [];
+					while (row = rs.next()) {
+						var d = {};
+						columns.each(function(column){
+							d[column] = row.get(column);
+						}.bind(this));
+						ds.push(d);
+					}
+					pushData.tables[table] = ds;
+				}.bind(this)
+			});
 		}.bind(this));
 		this.request.post(pushData);
 	},
